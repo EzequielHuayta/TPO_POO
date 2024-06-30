@@ -65,13 +65,14 @@ public class LoginView extends JPanel {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
-            if(usuarioController.verificarLogin(email, password)){
-
+            if(usuarioController.authenticateUsuario(email, password)){
+                emailField.setText("");
+                passwordField.setText("");
                 MainFrame mainFrame = MainFrame.getInstance();
                 mainFrame.addPanel(new OptionsView(), "options");
                 mainFrame.showPanel("options");
             }else {
-                JOptionPane.showMessageDialog(null, "Este es un mensaje de error", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Email o contraseña invalidos", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

@@ -3,9 +3,11 @@ package controller;
 import model.usuario.Usuario;
 import model.usuario.UsuarioModel;
 
+import java.util.List;
+
 public class UsuarioController {
     private static UsuarioController instance;
-    private UsuarioModel model;
+    private final UsuarioModel model;
 
     private UsuarioController() {
         model = new UsuarioModel();
@@ -18,15 +20,16 @@ public class UsuarioController {
         return instance;
     }
 
-    public void addUsuario(Usuario usuario) {
-        model.addUsuario(usuario);
+    public void addUsuario() {
+        model.addUsuario();
     }
 
-    public boolean verificarLogin(String email, String password) {
-        //TODO MODIFICAR
-        return true;
+    public boolean authenticateUsuario(String email, String password) {
+        return model.authenticateUsuario(email, password);
     }
 
-    // Métodos para modificar, borrar y listar usuarios
+    public List<Usuario> getAllUsuarios(){
+        return model.getAllUsuarios();
+    }
 }
 

@@ -24,6 +24,7 @@ public class MainFrame extends JFrame {
         int FRAME_HEIGHT = 700;
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         add(mainPanel);
     }
 
@@ -53,6 +54,10 @@ public class MainFrame extends JFrame {
             String currentPanel = panelHistory.pop();
             mainPanel.remove(panelMap.get(currentPanel));
             panelMap.remove(currentPanel);
+            if(!panelHistory.isEmpty()){
+                String previousPanel = panelHistory.peek();
+                cardLayout.show(mainPanel, previousPanel);
+            }
         }
     }
 }
