@@ -1,6 +1,6 @@
 package controller;
 
-import model.paciente.Paciente;
+import model.paciente.PacienteDTO;
 import model.paciente.PacienteModel;
 
 public class PacienteController {
@@ -18,8 +18,8 @@ public class PacienteController {
         return instance;
     }
 
-    public void addPaciente(Paciente paciente) {
-        model.addPaciente(paciente);
+    public void addPaciente(PacienteDTO pacienteDTO) {
+        model.addPaciente(pacienteDTO);
     }
 
     // Métodos para modificar, borrar y listar pacientes

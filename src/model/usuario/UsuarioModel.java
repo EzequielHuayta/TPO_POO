@@ -37,9 +37,14 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
         return null;
     }
 
-    public boolean authenticateUsuario(String email, String password) {
-        UsuarioDTO usuario = findByEmail(email);
-        return usuario != null && usuario.getPassword().equals(password);
+    public UsuarioDTO authenticateUsuario(String email, String password) {
+        List<UsuarioDTO> usuarios = readAll();
+        for (UsuarioDTO usuario : usuarios) {
+            if (usuario.getEmail().equals(email) && usuario.getPassword().equals(password)) {
+                return usuario;
+            }
+        }
+        return null;
     }
 
     public void addUsuario(UsuarioDTO usuario) {

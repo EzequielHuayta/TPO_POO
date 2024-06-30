@@ -1,6 +1,7 @@
 package view;
 
 import controller.UsuarioController;
+import view.resultados.ResultadosListView;
 import view.usuario.UsuarioListView;
 
 import javax.swing.*;
@@ -9,6 +10,7 @@ import java.awt.*;
 public class OptionsView extends JPanel {
 
     MainFrame mainFrame;
+    UsuarioController usuarioController;
 
     public OptionsView() {
         // Controllers
@@ -44,6 +46,48 @@ public class OptionsView extends JPanel {
         JButton listPatientsButton = new JButton("Listar Pacientes");
         JButton listBranchesButton = new JButton("Listar Sucursales");
         JButton listResultsButton = new JButton("Listar Resultados");
+
+        // Check user role and disable buttons accordingly
+        UsuarioController usuarioController = UsuarioController.getInstance();
+
+        String role = usuarioController.getCurrentUser().getRol().name();
+        switch (role) {
+            case "ADMINISTRADOR":
+                listUsersButton.setEnabled(true);
+                listPracticesButton.setEnabled(true);
+                listCriticalPracticesButton.setEnabled(true);
+                listPatientsButton.setEnabled(true);
+                listBranchesButton.setEnabled(true);
+                listResultsButton.setEnabled(true);
+                break;
+            case "RECEPCION":
+                // Receptionists have limited access
+                listUsersButton.setEnabled(true);
+                listPracticesButton.setEnabled(true);
+                listCriticalPracticesButton.setEnabled(true);
+                listPatientsButton.setEnabled(true);
+                listBranchesButton.setEnabled(true);
+                listResultsButton.setEnabled(true);
+                break;
+            case "LABORATORISTA":
+                listUsersButton.setEnabled(false);
+                listPracticesButton.setEnabled(false);
+                listCriticalPracticesButton.setEnabled(false);
+                listPatientsButton.setEnabled(false);
+                listBranchesButton.setEnabled(false);
+                listResultsButton.setEnabled(true);
+
+                break;
+            default:
+                // Default to no access
+                listUsersButton.setEnabled(false);
+                listPracticesButton.setEnabled(false);
+                listCriticalPracticesButton.setEnabled(false);
+                listPatientsButton.setEnabled(false);
+                listBranchesButton.setEnabled(false);
+                listResultsButton.setEnabled(false);
+                break;
+        }
 
         // Posicionar botones en el GridBagLayout
         gridBagConstraints.gridx = 0;
@@ -82,5 +126,31 @@ public class OptionsView extends JPanel {
             mainFrame.addPanel(new UsuarioListView(), "usuariolist");
             mainFrame.showPanel("usuariolist");
         });
+
+        listPracticesButton.addActionListener(e -> {
+            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
+            mainFrame.showPanel("usuariolist");
+        });
+
+        listCriticalPracticesButton.addActionListener(e -> {
+            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
+            mainFrame.showPanel("usuariolist");
+        });
+
+        listPatientsButton.addActionListener(e -> {
+            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
+            mainFrame.showPanel("usuariolist");
+        });
+
+        listBranchesButton.addActionListener(e -> {
+            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
+            mainFrame.showPanel("usuariolist");
+        });
+
+        listResultsButton.addActionListener(e -> {
+            mainFrame.addPanel(new ResultadosListView(), "resultadolist");
+            mainFrame.showPanel("resultadolist");
+        });
+
     }
 }

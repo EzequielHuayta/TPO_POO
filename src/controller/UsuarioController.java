@@ -13,7 +13,7 @@ public class UsuarioController {
     private static UsuarioController instance;
     private final UsuarioModel model;
     private final ArrayList<RefreshableView> attachedViews;
-
+    private UsuarioDTO currentUser;
     private UsuarioController() {
         model = new UsuarioModel();
         attachedViews = new ArrayList<>();
@@ -46,7 +46,16 @@ public class UsuarioController {
     }
 
     public boolean authenticateUsuario(String email, String password) {
-        return model.authenticateUsuario(email, password);
+        UsuarioDTO usuario = model.authenticateUsuario(email, password);
+        if (usuario != null) {
+            currentUser = usuario;
+            return true;
+        }
+        return false;
+    }
+
+    public UsuarioDTO getCurrentUser() {
+        return currentUser;
     }
 
     public List<UsuarioDTO> getAllUsuarios(){
