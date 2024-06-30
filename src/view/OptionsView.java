@@ -1,12 +1,14 @@
 package view;
 
 import controller.UsuarioController;
-import view.lists.UsuarioListView;
+import view.usuario.UsuarioListView;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class OptionsView extends JPanel {
+
+    MainFrame mainFrame;
 
     public OptionsView() {
         // Controllers
@@ -26,6 +28,7 @@ public class OptionsView extends JPanel {
         toolBar.add(backButton, BorderLayout.WEST);
         add(toolBar, BorderLayout.NORTH);
 
+        mainFrame = MainFrame.getInstance();
         setAdministratorOptions();
     }
 
@@ -76,7 +79,6 @@ public class OptionsView extends JPanel {
 
         // Interactions
         listUsersButton.addActionListener(e -> {
-            MainFrame mainFrame = MainFrame.getInstance();
             mainFrame.addPanel(new UsuarioListView(), "usuariolist");
             mainFrame.showPanel("usuariolist");
         });

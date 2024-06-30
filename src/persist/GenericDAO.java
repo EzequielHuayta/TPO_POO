@@ -1,6 +1,7 @@
 package persist;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,13 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class GenericDAO<T> {
-    private final Gson gson = new Gson();
+    private final Gson gson;
     private final String filePath;
     private final Type listType;
 
     protected GenericDAO(String filePath, Type listType) {
         this.filePath = filePath;
         this.listType = listType;
+        gson = new GsonBuilder()
+                .setDateFormat("dd-MM-yyyy")
+                .create();
     }
 
     public void create(T entity) {
