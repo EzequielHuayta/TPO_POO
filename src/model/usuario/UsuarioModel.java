@@ -47,10 +47,6 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
         return null;
     }
 
-    public void addUsuario(UsuarioDTO usuario) {
-        create(usuario);
-    }
-
     public List<UsuarioDTO> getAllUsuarios() {
         return readAll();
     }

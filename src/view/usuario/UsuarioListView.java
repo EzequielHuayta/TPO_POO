@@ -2,13 +2,19 @@ package view.usuario;
 
 import controller.UsuarioController;
 import model.usuario.UsuarioDTO;
+import utils.ButtonEditor;
+import utils.ButtonListener;
+import utils.ButtonRenderer;
 import view.MainFrame;
 import view.RefreshableView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -46,9 +52,9 @@ public class UsuarioListView extends JPanel implements RefreshableView {
     }
 
     private void createTable(UsuarioController usuarioController) {
-        String[] columnNames = {"ID", "Email", "Password", "Nombre", "Domicilio", "DNI", "Fecha Nacimiento", "Rol"};
+        String[] columnNames = {"ID", "Email", "Password", "Nombre", "Domicilio", "DNI", "Fecha Nacimiento", "Rol", "Acciones"};
         List<UsuarioDTO> usuarios = usuarioController.getAllUsuarios();
-        Object[][] data = new Object[usuarios.size()][8];
+        Object[][] data = new Object[usuarios.size()][9];
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         for (int i = 0; i < usuarios.size(); i++) {
@@ -61,10 +67,35 @@ public class UsuarioListView extends JPanel implements RefreshableView {
             data[i][5] = usuario.getDni();
             data[i][6] = dateFormat.format(usuario.getFechaNacimiento());
             data[i][7] = usuario.getRol().toString();
+            data[i][8] = "Acciones";
         }
 
         tableModel = new DefaultTableModel(data, columnNames);
-        JTable userTable = new JTable(tableModel);
+        // Custom JTable implementation
+        JTable userTable = new JTable(tableModel) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 8;
+            }
+
+        };
+
+        userTable.getColumn("Acciones").setCellRenderer(new ButtonRenderer());
+        userTable.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), tableModel, new ButtonListener() {
+            @Override
+            public void onEditButtonClicked(int id) {
+                mainFrame.addPanel(new UsuarioFormView(usuarioController.getUsuarioByID(id)), "usuarioform");
+                mainFrame.showPanel("usuarioform");
+            }
+
+            @Override
+            public void onDeleteButtonClicked(int id) {
+                int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este usuario?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    usuarioController.deleteUsuario(id);
+                }
+            }
+        }));
 
         // Adjusting column sizes
         TableColumnModel columnModel = userTable.getColumnModel();
@@ -91,7 +122,8 @@ public class UsuarioListView extends JPanel implements RefreshableView {
                     usuario.getDomicilio(),
                     usuario.getDni(),
                     dateFormat.format(usuario.getFechaNacimiento()),
-                    usuario.getRol().toString()
+                    usuario.getRol().toString(),
+                    "Acciones"
             };
             tableModel.addRow(row);
         }

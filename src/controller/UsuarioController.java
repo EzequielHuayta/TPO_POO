@@ -41,8 +41,22 @@ public class UsuarioController {
     }
 
     public void addUsuario(String email, String password, String nombre, String domicilio, int dni, Date fechaNacimiento, Rol rol) {
-        model.addUsuario(new UsuarioDTO(model.getLatestId(), email, password, nombre, domicilio, dni, fechaNacimiento, rol));
+        model.create(new UsuarioDTO(model.getLatestId(), email, password, nombre, domicilio, dni, fechaNacimiento, rol));
         refreshViews();
+    }
+
+    public void deleteUsuario(int id) {
+        model.delete(id);
+        refreshViews();
+    }
+
+    public void updateUsuario(int id, String email, String password, String nombre, String domicilio, int dni, Date fechaNacimiento, Rol rol) {
+        model.update(new UsuarioDTO(id, email, password, nombre, domicilio, dni, fechaNacimiento, rol));
+        refreshViews();
+    }
+
+    public UsuarioDTO getUsuarioByID(int id){
+        return model.read(id);
     }
 
     public boolean authenticateUsuario(String email, String password) {
@@ -62,4 +76,3 @@ public class UsuarioController {
         return model.getAllUsuarios();
     }
 }
-
