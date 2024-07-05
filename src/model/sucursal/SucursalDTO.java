@@ -32,4 +32,22 @@ public class SucursalDTO {
     public int getResponsableTecnico() {
         return responsableTecnico;
     }
+
+    @Override
+    public String toString() {
+        return direccion;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        SucursalDTO sucursal = (SucursalDTO) obj;
+        return numero == sucursal.numero;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(numero);
+    }
 }

@@ -16,10 +16,10 @@ public class SucursalFormView extends JPanel {
     private JToolBar toolBar;
     private JTextField direccionField;
     private JComboBox responsableComboBox;
-    private UsuarioController usuarioController = UsuarioController.getInstance();
-    private SucursalController sucursalController = SucursalController.getInstance();
+    private UsuarioController usuarioController;
+    private SucursalController sucursalController;
     private final MainFrame mainFrame = MainFrame.getInstance();
-    private final UsuarioDTO[] usuariosArray = usuarioController.getAllUsuariosAsArray();
+    private UsuarioDTO[] usuariosArray;
 
     public SucursalFormView() {
         initializeView();
@@ -44,9 +44,11 @@ public class SucursalFormView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeView(){
+    private void initializeView() {
         // Controllers
         usuarioController = UsuarioController.getInstance();
+        sucursalController = SucursalController.getInstance();
+        usuariosArray = usuarioController.getAllUsuariosAsArray();
         // UI
         setLayout(new BorderLayout());
         // ToolBar
@@ -81,7 +83,7 @@ public class SucursalFormView extends JPanel {
     }
 
     private void createSucursal() {
-        if (!validateNonEmptyFields(direccionField)){
+        if (!validateNonEmptyFields(direccionField)) {
             return;
         }
         String direccion = direccionField.getText();
@@ -90,36 +92,36 @@ public class SucursalFormView extends JPanel {
         // Hacemos el ABM y verificamos si fue exitoso
         assert usuario != null;
         ABMResult abmResult = sucursalController.addSucursal(new SucursalDTO(direccion, usuario.getId()));
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
-        }else {
+        } else {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateSucursal(int numeroSucursal) {
-        if (!validateNonEmptyFields(direccionField)){
+        if (!validateNonEmptyFields(direccionField)) {
             return;
         }
         String direccion = direccionField.getText();
         UsuarioDTO usuario = (UsuarioDTO) responsableComboBox.getSelectedItem();
 
-        if(usuario == null){
+        if (usuario == null) {
             JOptionPane.showMessageDialog(this, "Por favor ingrese un usuario válido", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         // Hacemos el ABM y verificamos si fue exitoso
         ABMResult abmResult = sucursalController.updateSucursal(new SucursalDTO(numeroSucursal, direccion, usuario.getId()));
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
-        }else {
+        } else {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private boolean validateNonEmptyFields(JTextField... fields){
+    private boolean validateNonEmptyFields(JTextField... fields) {
         for (JTextField field : fields) {
             if (field.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);

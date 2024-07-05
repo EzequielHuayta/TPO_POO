@@ -33,7 +33,6 @@ public class UsuarioFormView extends JPanel {
     private UsuarioController usuarioController;
     private final MainFrame mainFrame = MainFrame.getInstance();
 
-
     public UsuarioFormView() {
         initializeView();
         // Botón crear usuario
@@ -65,7 +64,7 @@ public class UsuarioFormView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeView(){
+    private void initializeView() {
         // Controllers
         usuarioController = UsuarioController.getInstance();
         // UI
@@ -153,7 +152,7 @@ public class UsuarioFormView extends JPanel {
     }
 
     private void createUsuario() {
-        if (!validateNonEmptyFields(emailField, passwordField, nombreField, domicilioField, dniField)){
+        if (!validateNonEmptyFields(emailField, passwordField, nombreField, domicilioField, dniField)) {
             return;
         }
         String email = emailField.getText();
@@ -163,23 +162,23 @@ public class UsuarioFormView extends JPanel {
         Rol rol = (Rol) rolComboBox.getSelectedItem();
         Date fechaNacimiento = (Date) datePicker.getModel().getValue();
         String dniString = dniField.getText();
-        if(!validateEmail(email) || !validateDNI(dniString) || !validateFechaNacimiento(fechaNacimiento)){
+        if (!validateEmail(email) || !validateDNI(dniString) || !validateFechaNacimiento(fechaNacimiento)) {
             return;
         }
         int dni = Integer.parseInt(dniString);
 
         // Hacemos el ABM y verificamos si fue exitoso
         ABMResult abmResult = usuarioController.addUsuario(new UsuarioDTO(email, password, nombre, domicilio, dni, fechaNacimiento, rol));
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
-        }else {
+        } else {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateUsuario(int idUsuario) {
-        if (!validateNonEmptyFields(emailField, passwordField, nombreField, domicilioField, dniField)){
+        if (!validateNonEmptyFields(emailField, passwordField, nombreField, domicilioField, dniField)) {
             return;
         }
         String email = emailField.getText();
@@ -189,7 +188,7 @@ public class UsuarioFormView extends JPanel {
         Rol rol = (Rol) rolComboBox.getSelectedItem();
         Date fechaNacimiento = (Date) datePicker.getModel().getValue();
         String dniString = dniField.getText();
-        if(!validateEmail(email) || !validateDNI(dniString) || !validateFechaNacimiento(fechaNacimiento)){
+        if (!validateEmail(email) || !validateDNI(dniString) || !validateFechaNacimiento(fechaNacimiento)) {
             return;
         }
         int dni = Integer.parseInt(dniString);
@@ -198,12 +197,12 @@ public class UsuarioFormView extends JPanel {
         if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
-        }else {
+        } else {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private boolean validateNonEmptyFields(JTextField... fields){
+    private boolean validateNonEmptyFields(JTextField... fields) {
         for (JTextField field : fields) {
             if (field.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -215,7 +214,7 @@ public class UsuarioFormView extends JPanel {
 
     private boolean validateEmail(String email) {
         String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        if(!email.matches(emailRegex)){
+        if (!email.matches(emailRegex)) {
             JOptionPane.showMessageDialog(this, "Por favor ingrese un email válido", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -223,7 +222,7 @@ public class UsuarioFormView extends JPanel {
     }
 
     private boolean validateDNI(String dni) {
-        if (dni.length() != 8){
+        if (dni.length() != 8) {
             JOptionPane.showMessageDialog(this, "Ingrese un DNI válido", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -231,7 +230,7 @@ public class UsuarioFormView extends JPanel {
     }
 
     private boolean validateFechaNacimiento(Date fechaNacimiento) {
-        if (fechaNacimiento == null){
+        if (fechaNacimiento == null) {
             JOptionPane.showMessageDialog(this, "Por favor ingrese una fecha de nacimiento", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }

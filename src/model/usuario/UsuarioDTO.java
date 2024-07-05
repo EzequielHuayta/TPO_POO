@@ -73,4 +73,17 @@ public class UsuarioDTO {
     public String toString() {
         return nombre;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        UsuarioDTO usuario = (UsuarioDTO) obj;
+        return id == usuario.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }

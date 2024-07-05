@@ -119,11 +119,10 @@ public class SucursalListView extends JPanel implements RefreshableView {
         tableModel.fireTableDataChanged();
     }
 
-    private String getUsuarioNameFromID(int idResponsable){
+    private String getUsuarioNameFromID(int idResponsable) {
         UsuarioDTO usuario = usuarioController.getUsuarioByID(idResponsable);
-        if(usuario != null){
+        if (usuario != null) {
             return usuario.getNombre();
-        }
-        else return "Sin asignar";
+        } else return "Sin asignar";
     }
 }

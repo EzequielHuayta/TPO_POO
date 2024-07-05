@@ -2,6 +2,7 @@ package controller;
 
 import model.sucursal.SucursalDTO;
 import model.sucursal.SucursalModel;
+import model.usuario.UsuarioDTO;
 import utils.ABMResult;
 import view.RefreshableView;
 
@@ -68,5 +69,12 @@ public class SucursalController {
 
     public List<SucursalDTO> getAllSucursales(){
         return model.getAllSucursales();
+    }
+
+    public SucursalDTO[] getAllSucursalesAsArray(){
+        List<SucursalDTO> sucursalesList = model.getAllSucursales();
+        SucursalDTO[] sucursalesArray = new SucursalDTO[sucursalesList.size()];
+        sucursalesArray = sucursalesList.toArray(sucursalesArray);
+        return sucursalesArray;
     }
 }

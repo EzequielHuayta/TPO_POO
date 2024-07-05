@@ -1,21 +1,42 @@
 package model.paciente;
 
 public class PacienteDTO {
-
+    private int id;
     private final int dni;
     private final String nombre;
-    private final String apellido;
-    private final String mail;
+    private final String email;
+    private final String domicilio;
     private final char sexo;
     private final int edad;
+    private final int sucursalAsignada;
 
-    public PacienteDTO(int dni, String nombre, String apellido, String mail, char sexo, int edad) {
+    public PacienteDTO(int id, int dni, String nombre, String email, String domicilio, char sexo, int edad, int sucursalAsignada) {
+        this.id = id;
         this.dni = dni;
         this.nombre = nombre;
-        this.apellido = apellido;
-        this.mail = mail;
+        this.domicilio = domicilio;
+        this.email = email;
         this.sexo = sexo;
         this.edad = edad;
+        this.sucursalAsignada = sucursalAsignada;
+    }
+
+    public PacienteDTO(int dni, String nombre, String email, String domicilio, char sexo, int edad, int sucursalAsignada) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.domicilio = domicilio;
+        this.email = email;
+        this.sexo = sexo;
+        this.edad = edad;
+        this.sucursalAsignada = sucursalAsignada;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int nuevoId){
+        id = nuevoId;
     }
 
     public int getDni() {
@@ -26,12 +47,12 @@ public class PacienteDTO {
         return nombre;
     }
 
-    public String getApellido() {
-        return apellido;
+    public String getDomicilio() {
+        return domicilio;
     }
 
-    public String getMail() {
-        return mail;
+    public String getEmail() {
+        return email;
     }
 
     public char getSexo() {
@@ -42,5 +63,7 @@ public class PacienteDTO {
         return edad;
     }
 
+    public int getSucursalAsignada() {
+        return sucursalAsignada;
+    }
 }
-

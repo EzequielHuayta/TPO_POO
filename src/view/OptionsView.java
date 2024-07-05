@@ -1,6 +1,7 @@
 package view;
 
 import controller.UsuarioController;
+import view.paciente.PacienteListView;
 import view.practica.PracticaListView;
 import view.resultados.ResultadosListView;
 import view.sucursal.SucursalListView;
@@ -141,8 +142,8 @@ public class OptionsView extends JPanel {
         });
 
         listPatientsButton.addActionListener(e -> {
-            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
-            mainFrame.showPanel("usuariolist");
+            mainFrame.addPanel(new PacienteListView(), "pacientelist");
+            mainFrame.showPanel("pacientelist");
         });
 
         listSucursalesButton.addActionListener(e -> {
