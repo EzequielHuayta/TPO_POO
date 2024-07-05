@@ -2,12 +2,12 @@ package model.paciente;
 
 public class PacienteDTO {
 
-    private int dni;
-    private String nombre;
-    private String apellido;
-    private String mail;
-    private char sexo;
-    private int edad;
+    private final int dni;
+    private final String nombre;
+    private final String apellido;
+    private final String mail;
+    private final char sexo;
+    private final int edad;
 
     public PacienteDTO(int dni, String nombre, String apellido, String mail, char sexo, int edad) {
         this.dni = dni;

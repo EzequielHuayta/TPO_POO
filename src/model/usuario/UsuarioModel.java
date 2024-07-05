@@ -2,6 +2,7 @@ package model.usuario;
 
 import com.google.gson.reflect.TypeToken;
 import persist.GenericDAO;
+import utils.ABMResult;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -27,16 +28,6 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
         return 0;
     }
 
-    private UsuarioDTO findByEmail(String email) {
-        List<UsuarioDTO> usuarios = readAll();
-        for (UsuarioDTO usuario : usuarios) {
-            if (usuario.getEmail().equals(email)) {
-                return usuario;
-            }
-        }
-        return null;
-    }
-
     public UsuarioDTO authenticateUsuario(String email, String password) {
         List<UsuarioDTO> usuarios = readAll();
         for (UsuarioDTO usuario : usuarios) {
@@ -45,6 +36,52 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
             }
         }
         return null;
+    }
+
+    private boolean verifyInUseEmail(String email, int id) {
+        List<UsuarioDTO> usuarios = readAll();
+        for (UsuarioDTO usuario : usuarios) {
+            if (usuario.getEmail().equals(email) && usuario.getId() != id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean verifyInUseDNI(int dni, int id) {
+        List<UsuarioDTO> usuarios = readAll();
+        for (UsuarioDTO usuario : usuarios) {
+            if (usuario.getDni() == dni && usuario.getId() != id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ABMResult addUsuario(UsuarioDTO usuarioDTO){
+        usuarioDTO.setId(getLatestId());
+        if(verifyInUseEmail(usuarioDTO.getEmail(), -1)){
+            return new ABMResult(false, "Ya existe un usuario registrado con ese email");
+        }else if(verifyInUseDNI(usuarioDTO.getDni(), -1)){
+            return new ABMResult(false, "Ya existe un usuario registrado con ese DNI");
+        }
+        create(usuarioDTO);
+        return new ABMResult(true, "Usuario creado con éxito");
+    }
+
+    public ABMResult updateUsuario(UsuarioDTO usuarioDTO){
+        if(verifyInUseEmail(usuarioDTO.getEmail(), usuarioDTO.getId())){
+            return new ABMResult(false, "Ya existe un usuario registrado con ese email");
+        }else if(verifyInUseDNI(usuarioDTO.getDni(), usuarioDTO.getId())){
+            return new ABMResult(false, "Ya existe un usuario registrado con ese DNI");
+        }
+        update(usuarioDTO);
+        return new ABMResult(true, "Usuario actualizado con éxito");
+    }
+
+    public ABMResult deleteUsuario(int id){
+        delete(id);
+        return new ABMResult(true, "Usuario eliminado con éxito");
     }
 
     public List<UsuarioDTO> getAllUsuarios() {

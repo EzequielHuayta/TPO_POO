@@ -3,6 +3,7 @@ package view;
 import controller.UsuarioController;
 import view.practica.PracticaListView;
 import view.resultados.ResultadosListView;
+import view.sucursal.SucursalListView;
 import view.usuario.UsuarioListView;
 
 import javax.swing.*;
@@ -24,6 +25,7 @@ public class OptionsView extends JPanel {
         backButton.addActionListener(e -> {
             MainFrame mainFrame = MainFrame.getInstance();
             mainFrame.goBack();
+            usuarioController.logoutUser();
             JOptionPane.showMessageDialog(null, "La sesión fue cerrada con éxito", "Sesión cerrada", JOptionPane.INFORMATION_MESSAGE);
         });
 
@@ -45,20 +47,20 @@ public class OptionsView extends JPanel {
         JButton listPracticesButton = new JButton("Listar Prácticas");
         JButton listCriticalPracticesButton = new JButton("Listar Prácticas con Resultados Críticos");
         JButton listPatientsButton = new JButton("Listar Pacientes");
-        JButton listBranchesButton = new JButton("Listar Sucursales");
+        JButton listSucursalesButton = new JButton("Listar Sucursales");
         JButton listResultsButton = new JButton("Listar Resultados");
 
         // Check user role and disable buttons accordingly
         UsuarioController usuarioController = UsuarioController.getInstance();
 
-        String role = usuarioController.getCurrentUser().getRol().name();
+        String role = usuarioController.getLoggedUser().getRol().name();
         switch (role) {
             case "ADMINISTRADOR":
                 listUsersButton.setEnabled(true);
                 listPracticesButton.setEnabled(true);
                 listCriticalPracticesButton.setEnabled(true);
                 listPatientsButton.setEnabled(true);
-                listBranchesButton.setEnabled(true);
+                listSucursalesButton.setEnabled(true);
                 listResultsButton.setEnabled(true);
                 break;
             case "RECEPCION":
@@ -67,7 +69,7 @@ public class OptionsView extends JPanel {
                 listPracticesButton.setEnabled(true);
                 listCriticalPracticesButton.setEnabled(true);
                 listPatientsButton.setEnabled(true);
-                listBranchesButton.setEnabled(true);
+                listSucursalesButton.setEnabled(true);
                 listResultsButton.setEnabled(true);
                 break;
             case "LABORATORISTA":
@@ -75,7 +77,7 @@ public class OptionsView extends JPanel {
                 listPracticesButton.setEnabled(false);
                 listCriticalPracticesButton.setEnabled(false);
                 listPatientsButton.setEnabled(false);
-                listBranchesButton.setEnabled(false);
+                listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(true);
 
                 break;
@@ -85,7 +87,7 @@ public class OptionsView extends JPanel {
                 listPracticesButton.setEnabled(false);
                 listCriticalPracticesButton.setEnabled(false);
                 listPatientsButton.setEnabled(false);
-                listBranchesButton.setEnabled(false);
+                listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(false);
                 break;
         }
@@ -109,7 +111,7 @@ public class OptionsView extends JPanel {
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        panel.add(listBranchesButton, gridBagConstraints);
+        panel.add(listSucursalesButton, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
@@ -143,9 +145,9 @@ public class OptionsView extends JPanel {
             mainFrame.showPanel("usuariolist");
         });
 
-        listBranchesButton.addActionListener(e -> {
-            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
-            mainFrame.showPanel("usuariolist");
+        listSucursalesButton.addActionListener(e -> {
+            mainFrame.addPanel(new SucursalListView(), "sucursallist");
+            mainFrame.showPanel("sucursallist");
         });
 
         listResultsButton.addActionListener(e -> {

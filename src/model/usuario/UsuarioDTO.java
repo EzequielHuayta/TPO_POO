@@ -3,7 +3,7 @@ package model.usuario;
 import java.util.Date;
 
 public class UsuarioDTO {
-    private final int id;
+    private int id;
     private final String email;
     private final String password;
     private final String nombre;
@@ -23,8 +23,22 @@ public class UsuarioDTO {
         this.rol = rol;
     }
 
+    public UsuarioDTO(String email, String password, String nombre, String domicilio, int dni, Date fechaNacimiento, Rol rol) {
+        this.email = email;
+        this.password = password;
+        this.nombre = nombre;
+        this.domicilio = domicilio;
+        this.dni = dni;
+        this.fechaNacimiento = fechaNacimiento;
+        this.rol = rol;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int newID) {
+        id = newID;
     }
 
     public String getEmail() {
@@ -53,5 +67,10 @@ public class UsuarioDTO {
 
     public Date getFechaNacimiento() {
         return fechaNacimiento;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
     }
 }

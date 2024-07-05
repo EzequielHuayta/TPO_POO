@@ -3,8 +3,8 @@ package model.sucursal;
 public class SucursalDTO {
 
     private int numero;
-    private String direccion;
-    private int responsableTecnico;
+    private final String direccion;
+    private final int responsableTecnico;
 
     public SucursalDTO(int numero, String direccion, int responsableTecnico) {
         this.numero = numero;
@@ -12,8 +12,17 @@ public class SucursalDTO {
         this.responsableTecnico = responsableTecnico;
     }
 
+    public SucursalDTO(String direccion, int responsableTecnico) {
+        this.direccion = direccion;
+        this.responsableTecnico = responsableTecnico;
+    }
+
     public int getNumero() {
         return numero;
+    }
+
+    public void setNumero(int nuevoNumero){
+        numero = nuevoNumero;
     }
 
     public String getDireccion() {
