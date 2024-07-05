@@ -1,7 +1,6 @@
 package view.peticion;
 
 import controller.PeticionController;
-import controller.PracticaController;
 import model.peticion.PeticionDTO;
 import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
@@ -24,36 +23,69 @@ public class PeticionListView extends JPanel implements RefreshableView {
     private final PeticionController peticionController = PeticionController.getInstance();
     private DefaultTableModel tableModel;
 
-    public PeticionListView() {
+    public PeticionListView(boolean isCritico) {
+
+
         // Controller
         peticionController.attachView(this);
 
-        // UI
-        setLayout(new BorderLayout());
-        JToolBar toolBar = new JToolBar();
-        JButton backButton = new JButton("Atrás");
-        backButton.addActionListener(e -> {
-            peticionController.detachView(this);
-            mainFrame.goBack();
-        });
+        if(!isCritico) {
 
-        JButton createUserButton = new JButton("Crear petición");
-        createUserButton.addActionListener(e -> {
-            mainFrame.addPanel(new PeticionFormView(), "peticionform");
-            mainFrame.showPanel("peticionform");
-        });
+            // UI
+            setLayout(new BorderLayout());
+            JToolBar toolBar = new JToolBar();
+            JButton backButton = new JButton("Atrás");
+            backButton.addActionListener(e -> {
+                peticionController.detachView(this);
+                mainFrame.goBack();
+            });
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createUserButton, BorderLayout.EAST);
-        add(toolBar, BorderLayout.NORTH);
+            JButton createUserButton = new JButton("Crear petición");
+            createUserButton.addActionListener(e -> {
+                mainFrame.addPanel(new PeticionFormView(), "peticionform");
+                mainFrame.showPanel("peticionform");
+            });
 
-        createTable(peticionController);
+            JButton showCriticButton = new JButton("Listar peticiones criticas");
+            showCriticButton.addActionListener(e -> {
+                mainFrame.addPanel(new PeticionListView(true), "peticionlist");
+                mainFrame.showPanel("peticionlist");
+            });
+
+            toolBar.setLayout(new BorderLayout());
+            toolBar.add(backButton, BorderLayout.WEST);
+            toolBar.add(showCriticButton, BorderLayout.SOUTH);
+            toolBar.add(createUserButton, BorderLayout.EAST);
+            add(toolBar, BorderLayout.NORTH);
+
+            createTable(peticionController, isCritico);
+        } else {
+            // UI
+            setLayout(new BorderLayout());
+            JToolBar toolBar = new JToolBar();
+            JButton backButton = new JButton("Atrás");
+            backButton.addActionListener(e -> {
+                peticionController.detachView(this);
+                mainFrame.goBack();
+            });
+
+            toolBar.setLayout(new BorderLayout());
+            toolBar.add(backButton, BorderLayout.WEST);
+            add(toolBar, BorderLayout.NORTH);
+
+            createTable(peticionController, isCritico);
+        }
     }
 
-    private void createTable(PeticionController peticionController) {
+    private void createTable(PeticionController peticionController, Boolean isCritico) {
+        java.util.List<PeticionDTO> peticiones = null;
         String[] columnNames = {"ID", "Obra Social", "Fecha de carga", "Fecha entrega estimada", "Paciente", "Practicas", "Finalizada", "Acciones"};
-        java.util.List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
+        if (!isCritico) {
+            peticiones = peticionController.getAllPeticiones();
+        }
+        else {
+            peticiones = peticionController.getAllPeticionesCriticas();
+        }
         Object[][] data = new Object[peticiones.size()][8];
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 

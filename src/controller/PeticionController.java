@@ -2,6 +2,8 @@ package controller;
 
 import model.peticion.PeticionDTO;
 import model.peticion.PeticionModel;
+import model.practica.PracticaDTO;
+import model.resultado.ResultadoDTO;
 import utils.ABMResult;
 import view.RefreshableView;
 
@@ -75,5 +77,20 @@ public class PeticionController {
         PeticionDTO[] peticionesArray = new PeticionDTO[peticionesList.size()];
         peticionesArray = peticionesList.toArray(peticionesArray);
         return peticionesArray;
+    }
+
+    public List<PeticionDTO> getAllPeticionesCriticas() {
+        List<PeticionDTO> peticionesList = model.getAllPeticiones();
+        List<PeticionDTO> peticionesCriticasList = new ArrayList<>();
+
+        for (PeticionDTO peticion : peticionesList) {
+            System.out.println(peticion);
+            for (ResultadoDTO resultado : peticion.getListResultados()) {
+                if(resultado.esCritico()) {
+                    peticionesCriticasList.add(peticion);
+                }
+            }
+        }
+        return peticionesCriticasList;
     }
 }

@@ -136,7 +136,7 @@ public class OptionsView extends JPanel {
         });
 
         listarPeticiones.addActionListener(e -> {
-            mainFrame.addPanel(new PeticionListView(), "peticionlist");
+            mainFrame.addPanel(new PeticionListView(false), "peticionlist");
             mainFrame.showPanel("peticionlist");
         });
 

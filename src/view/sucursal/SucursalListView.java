@@ -86,7 +86,11 @@ public class SucursalListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar esta sucursal?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    sucursalController.deleteSucursal(id);
+                    Frame parentFrame = mainFrame;  // Asegúrate de obtener el Frame correcto
+
+                    // Crear el diálogo y mostrarlo
+                    SucursalDeleteView dialog = new SucursalDeleteView(parentFrame, sucursalController.getSucursalByNumero(id));
+                    dialog.setVisible(true);
                 }
             }
         }));

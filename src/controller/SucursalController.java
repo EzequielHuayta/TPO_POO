@@ -77,4 +77,6 @@ public class SucursalController {
         sucursalesArray = sucursalesList.toArray(sucursalesArray);
         return sucursalesArray;
     }
+
+
 }

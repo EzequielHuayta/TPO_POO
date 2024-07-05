@@ -1,6 +1,7 @@
 package model.paciente;
 
 import com.google.gson.reflect.TypeToken;
+import model.peticion.PeticionDTO;
 import persist.GenericDAO;
 import utils.ABMResult;
 
@@ -55,7 +56,7 @@ public class PacienteModel extends GenericDAO<PacienteDTO> {
         return new ABMResult(true, "Paciente actualizado con éxito");
     }
 
-    public ABMResult deletePaciente(int id){
+    public ABMResult deletePaciente(int id){;
         delete(id);
         return new ABMResult(true, "Paciente eliminado con éxito");
     }
