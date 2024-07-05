@@ -1,6 +1,7 @@
 package view;
 
 import controller.UsuarioController;
+import view.practica.PracticaListView;
 import view.resultados.ResultadosListView;
 import view.usuario.UsuarioListView;
 
@@ -128,8 +129,8 @@ public class OptionsView extends JPanel {
         });
 
         listPracticesButton.addActionListener(e -> {
-            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
-            mainFrame.showPanel("usuariolist");
+            mainFrame.addPanel(new PracticaListView(), "practicalist");
+            mainFrame.showPanel("practicalist");
         });
 
         listCriticalPracticesButton.addActionListener(e -> {

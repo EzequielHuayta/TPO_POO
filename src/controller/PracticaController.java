@@ -2,6 +2,7 @@ package controller;
 
 import model.practica.PracticaDTO;
 import model.practica.PracticaModel;
+import model.resultadopeticion.ResultadoPeticionDTO;
 import model.usuario.UsuarioDTO;
 import model.usuario.UsuarioModel;
 import view.RefreshableView;
@@ -49,6 +50,31 @@ public class PracticaController {
 
     public List<PracticaDTO> getAllPracticas() {
         return model.getAllPracticas();
+
+    }
+
+    public PracticaDTO getCodigoPractica(int codigoPractica) {
+        List<PracticaDTO> resultados = model.readAll();
+
+        for (PracticaDTO resultado : resultados) {
+            if (resultado.getCodigoPractica() == codigoPractica) {
+                return resultado;
+            }
+        }
+        return null;
+    }
+
+    public void deleteUsuario(int codigoPractica) {
+        //TODO
+    }
+
+
+    public void addPractica(String nombrePractica, int grupo, int valoresCriticos, int valoresReservados, int cantidadHorasResultados, boolean habilitado) {
+        model.create(new PracticaDTO(model.getLatestCodigoPractica(), nombrePractica, grupo, valoresCriticos, valoresReservados, cantidadHorasResultados, habilitado));
+        refreshViews();
+    }
+
+    public void updateResultado(int codigoUsuario, String nombrePractica, int grupo, int valoresCriticos, int valoresReservados, int cantidadHorasResultados, boolean habilitado) {
 
     }
 }
