@@ -1,5 +1,7 @@
 package model.practica;
 
+import model.paciente.PacienteDTO;
+
 public class PracticaDTO {
 
     private int codigo;
@@ -59,5 +61,23 @@ public class PracticaDTO {
 
     public boolean isHabilitada() {
         return habilitada;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PracticaDTO practicaDTO = (PracticaDTO) obj;
+        return codigo == practicaDTO.getCodigo();
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(codigo);
     }
 }

@@ -46,6 +46,7 @@ public class PeticionModel extends GenericDAO<PeticionDTO> {
     }
 
     public ABMResult updatePeticion(PeticionDTO peticionDTO){
+        peticionDTO.setFechaCarga(getCurrentDate());
         peticionDTO.setFechaCalculadaEntrega(calculateExpectedDate(peticionDTO.getFechaCarga(), peticionDTO.getListPracticas()));
         update(peticionDTO);
         return new ABMResult(true, "Petición actualizada con éxito");

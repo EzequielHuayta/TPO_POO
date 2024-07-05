@@ -6,15 +6,19 @@ import controller.PracticaController;
 import model.paciente.PacienteDTO;
 import model.peticion.PeticionDTO;
 import model.practica.PracticaDTO;
+import model.resultado.ResultadoDTO;
+import utils.ABMResult;
 import utils.CheckListItem;
 import utils.CheckListRenderer;
 import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class PeticionFormView extends JPanel{
     private JButton backButton;
@@ -49,11 +53,11 @@ public class PeticionFormView extends JPanel{
         // Botón editar práctica
         JPanel buttonPanel = new JPanel();
         createButton = new JButton("Modificar petición");
-        createButton.addActionListener(e -> updateResultado(peticion.getId()));
+        createButton.addActionListener(e -> updateResultado(peticion.getId(), peticion.getListResultados()));
         buttonPanel.add(createButton);
 
         obraSocialField.setText(peticion.getObraSocial());
-        marcarPracticasSeleccionadas(peticion.getListPracticas().toArray(new PracticaDTO[0]));
+        marcarPracticasSeleccionadas(peticion.getListPracticas());
         pacienteComboBox.setSelectedItem(pacienteController.getPacienteByID(peticion.getPaciente().getId()));
 
         add(buttonPanel, BorderLayout.SOUTH);
@@ -98,7 +102,9 @@ public class PeticionFormView extends JPanel{
         gbc.gridy = 2;
         DefaultListModel<CheckListItem> listModel = new DefaultListModel<>();
         for (PracticaDTO practica : practicasArray) {
-            listModel.addElement(new CheckListItem(practica));
+            if(practica.isHabilitada()){
+                listModel.addElement(new CheckListItem(practica));
+            }
         }
         practicasCheckList = new JList<>(listModel);
         practicasCheckList.setCellRenderer(new CheckListRenderer());
@@ -127,46 +133,52 @@ public class PeticionFormView extends JPanel{
     }
 
     private void createPractica() {
-//        if (!validateNonEmptyFields(obraSocialField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)){
-//            return;
-//        }
-//        String nombre = obraSocialField.getText();
-//        int grupo = Integer.parseInt(grupoField.getText());
-//        int valoresCriticos = Integer.parseInt(valoresCriticosField.getText());
-//        int valoresReservados = Integer.parseInt(valoresReservadosField.getText());
-//        int cantidadHorasResultados =  Integer.parseInt(cantidadHorasResultado.getText());
-//        String habilitadoString = (String) habilitadoComboBox.getSelectedItem();
-//        assert habilitadoString != null;
-//        ABMResult abmResult = practicaController.addPractica(new PracticaDTO(nombre, grupo, valoresCriticos,valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
-//        if (abmResult.getResult()) {
-//            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
-//            mainFrame.goBack();
-//        } else {
-//            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//        }
+        if (!validateNonEmptyFields(obraSocialField)){
+            return;
+        }
+        String obraSocial = obraSocialField.getText();
+        List<PracticaDTO> practicasSeleccionadas = new ArrayList<>();
+        DefaultListModel<CheckListItem> listModel = (DefaultListModel<CheckListItem>) practicasCheckList.getModel();
+        for (int i = 0; i < listModel.getSize(); i++) {
+            CheckListItem item = listModel.getElementAt(i);
+            if (item.isSelected()) {
+                practicasSeleccionadas.add(item.getPractica());
+            }
+        }
+        PacienteDTO paciente = (PacienteDTO) pacienteComboBox.getSelectedItem();
+        ABMResult abmResult = peticionController.addPeticion(new PeticionDTO(obraSocial, practicasSeleccionadas, paciente));
+        if (abmResult.getResult()) {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.goBack();
+        } else {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    private void updateResultado(int codigo) {
-//        if (!validateNonEmptyFields(obraSocialField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)){
-//            return;
-//        }
-//        String nombre = obraSocialField.getText();
-//        int grupo = Integer.parseInt(grupoField.getText());
-//        int valoresCriticos = Integer.parseInt(valoresCriticosField.getText());
-//        int valoresReservados = Integer.parseInt(valoresReservadosField.getText());
-//        int cantidadHorasResultados =  Integer.parseInt(cantidadHorasResultado.getText());
-//        String habilitadoString = (String) habilitadoComboBox.getSelectedItem();
-//        assert habilitadoString != null;
-//        ABMResult abmResult = practicaController.updatePractica(new PracticaDTO(codigo, nombre, grupo, valoresCriticos,valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
-//        if (abmResult.getResult()) {
-//            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
-//            mainFrame.goBack();
-//        } else {
-//            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//        }
+    private void updateResultado(int id, List<ResultadoDTO> listaResultados) {
+        if (!validateNonEmptyFields(obraSocialField)){
+            return;
+        }
+        String obraSocial = obraSocialField.getText();
+        List<PracticaDTO> practicasSeleccionadas = new ArrayList<>();
+        DefaultListModel<CheckListItem> listModel = (DefaultListModel<CheckListItem>) practicasCheckList.getModel();
+        for (int i = 0; i < listModel.getSize(); i++) {
+            CheckListItem item = listModel.getElementAt(i);
+            if (item.isSelected()) {
+                practicasSeleccionadas.add(item.getPractica());
+            }
+        }
+        PacienteDTO paciente = (PacienteDTO) pacienteComboBox.getSelectedItem();
+        ABMResult abmResult = peticionController.updatePeticion(new PeticionDTO(id, obraSocial, practicasSeleccionadas, listaResultados, paciente));
+        if (abmResult.getResult()) {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.goBack();
+        } else {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    private void marcarPracticasSeleccionadas(PracticaDTO[] practicasSeleccionadas) {
+    private void marcarPracticasSeleccionadas(List<PracticaDTO> practicasSeleccionadas) {
         DefaultListModel<CheckListItem> listModel = (DefaultListModel<CheckListItem>) practicasCheckList.getModel();
         for (int i = 0; i < listModel.getSize(); i++) {
             CheckListItem item = listModel.getElementAt(i);

@@ -4,6 +4,7 @@ import model.paciente.PacienteDTO;
 import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,10 +27,18 @@ public class PeticionDTO {
         this.paciente = paciente;
     }
 
-    public PeticionDTO(String obraSocial, List<PracticaDTO> listPracticas, List<ResultadoDTO> listResultados, PacienteDTO paciente) {
+    public PeticionDTO(int id, String obraSocial, List<PracticaDTO> listPracticas, List<ResultadoDTO> listResultados, PacienteDTO paciente) {
+        this.id = id;
         this.obraSocial = obraSocial;
         this.listPracticas = listPracticas;
         this.listResultados = listResultados;
+        this.paciente = paciente;
+    }
+
+    public PeticionDTO(String obraSocial, List<PracticaDTO> listPracticas, PacienteDTO paciente) {
+        this.obraSocial = obraSocial;
+        this.listPracticas = listPracticas;
+        this.listResultados = new ArrayList<>();
         this.paciente = paciente;
     }
 

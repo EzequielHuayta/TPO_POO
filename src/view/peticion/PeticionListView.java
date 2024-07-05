@@ -61,8 +61,8 @@ public class PeticionListView extends JPanel implements RefreshableView {
             PeticionDTO peticion = peticiones.get(i);
             data[i][0] = peticion.getId();
             data[i][1] = peticion.getObraSocial();
-            data[i][2] = peticion.getFechaCarga();
-            data[i][3] = peticion.getFechaCalculadaEntrega();
+            data[i][2] = dateFormat.format(peticion.getFechaCarga());
+            data[i][3] = dateFormat.format(peticion.getFechaCalculadaEntrega());
             data[i][4] = peticion.getPaciente().getNombre();
             data[i][5] = practicasToString(peticion.getListPracticas());
             data[i][6] = finalizadaToString(isPeticionFinalizada(peticion.getListPracticas(), peticion.getListResultados()));
@@ -110,13 +110,14 @@ public class PeticionListView extends JPanel implements RefreshableView {
         tableModel.setRowCount(0);
 
         List<PeticionDTO> peticones = peticionController.getAllPeticiones();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         for (PeticionDTO peticion : peticones) {
             Object[] row = {
                     peticion.getId(),
                     peticion.getObraSocial(),
-                    peticion.getFechaCarga(),
-                    peticion.getFechaCalculadaEntrega(),
+                    dateFormat.format(peticion.getFechaCarga()),
+                    dateFormat.format(peticion.getFechaCalculadaEntrega()),
                     peticion.getPaciente().getNombre(),
                     practicasToString(peticion.getListPracticas()),
                     finalizadaToString(isPeticionFinalizada(peticion.getListPracticas(), peticion.getListResultados())),
@@ -134,8 +135,9 @@ public class PeticionListView extends JPanel implements RefreshableView {
             return "Sin prácticas";
         } else {
             practicas = new StringBuilder(practicasList.get(0).getNombre());
+            practicasList.remove(0);
         }
-        if(practicasList.size() >= 2){
+        if(!practicasList.isEmpty()){
             for (PracticaDTO practica : practicasList){
                 practicas.append(", ").append(practica.getNombre());
             }

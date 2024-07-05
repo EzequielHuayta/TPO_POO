@@ -1,7 +1,9 @@
 package model.resultado;
 
 import com.google.gson.reflect.TypeToken;
+import model.practica.PracticaDTO;
 import persist.GenericDAO;
+import utils.ABMResult;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -33,5 +35,31 @@ public class ResultadoModel extends GenericDAO<ResultadoDTO> {
         }
         return 0;
     }
+
+//    public ABMResult addPractica(PracticaDTO practica){
+//        practica.setCodigo(getLatestCodigo());
+//        if(verifyInUseNombre(practica.getNombre(), -1)){
+//            return new ABMResult(false, "Ya existe una práctica con ese nombre");
+//        }
+//        create(practica);
+//        return new ABMResult(true, "Práctica creada con éxito");
+//    }
+//
+//    public ABMResult updatePractica(PracticaDTO practica){
+//        if(verifyInUseNombre(practica.getNombre(), practica.getCodigo())){
+//            return new ABMResult(false, "Ya existe una práctica con ese nombre");
+//        }
+//        update(practica);
+//        return new ABMResult(true, "Práctica actualizada con éxito");
+//    }
+//
+//    public ABMResult deletePractica(int numero){
+//        delete(numero);
+//        return new ABMResult(true, "Práctica eliminada con éxito");
+//    }
+//
+//    public List<PracticaDTO> getAllPracticas() {
+//        return readAll();
+//    }
 
 }
