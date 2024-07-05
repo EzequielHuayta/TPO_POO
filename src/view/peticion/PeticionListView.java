@@ -1,9 +1,11 @@
 package view.peticion;
 
 import controller.PeticionController;
+import controller.UsuarioController;
 import model.peticion.PeticionDTO;
 import model.practica.PracticaDTO;
-import model.resultado.ResultadoDTO;
+import model.usuario.Rol;
+import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
 import utils.ButtonListener;
 import utils.ButtonRenderer;
@@ -21,69 +23,60 @@ public class PeticionListView extends JPanel implements RefreshableView {
 
     private final MainFrame mainFrame = MainFrame.getInstance();
     private final PeticionController peticionController = PeticionController.getInstance();
+    private final UsuarioController usuarioController = UsuarioController.getInstance();
     private DefaultTableModel tableModel;
+    private UsuarioDTO loggedUser;
+    private boolean isCritico;
 
     public PeticionListView(boolean isCritico) {
-
+        this.isCritico = isCritico;
 
         // Controller
         peticionController.attachView(this);
 
-        if(!isCritico) {
+        // UI
+        setLayout(new BorderLayout());
+        JToolBar toolBar = new JToolBar();
+        JButton backButton = new JButton("Atrás");
+        backButton.addActionListener(e -> {
+            peticionController.detachView(this);
+            mainFrame.goBack();
+        });
 
-            // UI
-            setLayout(new BorderLayout());
-            JToolBar toolBar = new JToolBar();
-            JButton backButton = new JButton("Atrás");
-            backButton.addActionListener(e -> {
-                peticionController.detachView(this);
-                mainFrame.goBack();
-            });
+        JButton createUserButton = new JButton("Crear petición");
+        createUserButton.addActionListener(e -> {
+            mainFrame.addPanel(new PeticionFormView(), "peticionform");
+            mainFrame.showPanel("peticionform");
+        });
 
-            JButton createUserButton = new JButton("Crear petición");
-            createUserButton.addActionListener(e -> {
-                mainFrame.addPanel(new PeticionFormView(), "peticionform");
-                mainFrame.showPanel("peticionform");
-            });
-
+        toolBar.setLayout(new BorderLayout());
+        toolBar.add(backButton, BorderLayout.WEST);
+        if (!isCritico) {
             JButton showCriticButton = new JButton("Listar peticiones criticas");
             showCriticButton.addActionListener(e -> {
                 mainFrame.addPanel(new PeticionListView(true), "peticionlist");
                 mainFrame.showPanel("peticionlist");
             });
-
-            toolBar.setLayout(new BorderLayout());
-            toolBar.add(backButton, BorderLayout.WEST);
             toolBar.add(showCriticButton, BorderLayout.SOUTH);
-            toolBar.add(createUserButton, BorderLayout.EAST);
-            add(toolBar, BorderLayout.NORTH);
+        }
+        toolBar.add(createUserButton, BorderLayout.EAST);
+        add(toolBar, BorderLayout.NORTH);
 
-            createTable(peticionController, isCritico);
+
+        loggedUser = usuarioController.getLoggedUser();
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
+            createAdminTable(peticionController, isCritico);
         } else {
-            // UI
-            setLayout(new BorderLayout());
-            JToolBar toolBar = new JToolBar();
-            JButton backButton = new JButton("Atrás");
-            backButton.addActionListener(e -> {
-                peticionController.detachView(this);
-                mainFrame.goBack();
-            });
-
-            toolBar.setLayout(new BorderLayout());
-            toolBar.add(backButton, BorderLayout.WEST);
-            add(toolBar, BorderLayout.NORTH);
-
             createTable(peticionController, isCritico);
         }
     }
 
-    private void createTable(PeticionController peticionController, Boolean isCritico) {
+    private void createAdminTable(PeticionController peticionController, Boolean isCritico) {
         java.util.List<PeticionDTO> peticiones = null;
         String[] columnNames = {"ID", "Obra Social", "Fecha de carga", "Fecha entrega estimada", "Paciente", "Practicas", "Finalizada", "Acciones"};
         if (!isCritico) {
             peticiones = peticionController.getAllPeticiones();
-        }
-        else {
+        } else {
             peticiones = peticionController.getAllPeticionesCriticas();
         }
         Object[][] data = new Object[peticiones.size()][8];
@@ -137,50 +130,108 @@ public class PeticionListView extends JPanel implements RefreshableView {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    private void createTable(PeticionController peticionController, Boolean isCritico) {
+        java.util.List<PeticionDTO> peticiones = null;
+        String[] columnNames = {"ID", "Obra Social", "Fecha de carga", "Fecha entrega estimada", "Paciente", "Practicas", "Finalizada"};
+        if (!isCritico) {
+            peticiones = peticionController.getAllPeticiones();
+        } else {
+            peticiones = peticionController.getAllPeticionesCriticas();
+        }
+        Object[][] data = new Object[peticiones.size()][7];
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        for (int i = 0; i < peticiones.size(); i++) {
+            PeticionDTO peticion = peticiones.get(i);
+            data[i][0] = peticion.getId();
+            data[i][1] = peticion.getObraSocial();
+            data[i][2] = dateFormat.format(peticion.getFechaCarga());
+            data[i][3] = dateFormat.format(peticion.getFechaCalculadaEntrega());
+            data[i][4] = peticion.getPaciente().getNombre();
+            data[i][5] = practicasToString(peticion.getListPracticas());
+            data[i][6] = finalizadaToString(peticion.isFinalizada());
+        }
+
+        tableModel = new DefaultTableModel(data, columnNames);
+        // Custom JTable implementation
+        tableModel = new DefaultTableModel(data, columnNames);
+        JTable userTable = new JTable(tableModel) {
+            // Nothing to do here
+        };
+
+        // Adjusting column sizes
+        TableColumnModel columnModel = userTable.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(150);
+
+        JScrollPane scrollPane = new JScrollPane(userTable);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
     @Override
     public void onRefresh() {
         tableModel.setRowCount(0);
 
-        List<PeticionDTO> peticones = peticionController.getAllPeticiones();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-        for (PeticionDTO peticion : peticones) {
-            Object[] row = {
-                    peticion.getId(),
-                    peticion.getObraSocial(),
-                    dateFormat.format(peticion.getFechaCarga()),
-                    dateFormat.format(peticion.getFechaCalculadaEntrega()),
-                    peticion.getPaciente().getNombre(),
-                    practicasToString(peticion.getListPracticas()),
-                    finalizadaToString(peticion.isFinalizada()),
-                    "Acciones"
-            };
-            tableModel.addRow(row);
+        List<PeticionDTO> peticones;
+        if (isCritico) {
+            peticones = peticionController.getAllPeticionesCriticas();
+        } else {
+            peticones = peticionController.getAllPeticiones();
         }
 
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
+            for (PeticionDTO peticion : peticones) {
+                Object[] row = {
+                        peticion.getId(),
+                        peticion.getObraSocial(),
+                        dateFormat.format(peticion.getFechaCarga()),
+                        dateFormat.format(peticion.getFechaCalculadaEntrega()),
+                        peticion.getPaciente().getNombre(),
+                        practicasToString(peticion.getListPracticas()),
+                        finalizadaToString(peticion.isFinalizada()),
+                        "Acciones"
+                };
+                tableModel.addRow(row);
+            }
+        }else {
+            for (PeticionDTO peticion : peticones) {
+                Object[] row = {
+                        peticion.getId(),
+                        peticion.getObraSocial(),
+                        dateFormat.format(peticion.getFechaCarga()),
+                        dateFormat.format(peticion.getFechaCalculadaEntrega()),
+                        peticion.getPaciente().getNombre(),
+                        practicasToString(peticion.getListPracticas()),
+                        finalizadaToString(peticion.isFinalizada()),
+                };
+                tableModel.addRow(row);
+            }
+        }
         tableModel.fireTableDataChanged();
     }
 
-    private String practicasToString(List<PracticaDTO> practicasList){
+    private String practicasToString(List<PracticaDTO> practicasList) {
         StringBuilder practicas;
-        if(practicasList.isEmpty()){
+        if (practicasList.isEmpty()) {
             return "Sin prácticas";
         } else {
             practicas = new StringBuilder(practicasList.get(0).getNombre());
             practicasList.remove(0);
         }
-        if(!practicasList.isEmpty()){
-            for (PracticaDTO practica : practicasList){
+        if (!practicasList.isEmpty()) {
+            for (PracticaDTO practica : practicasList) {
                 practicas.append(", ").append(practica.getNombre());
             }
         }
         return practicas.toString();
     }
 
-    private String finalizadaToString(boolean valorFinalizada){
-        if(valorFinalizada){
+    private String finalizadaToString(boolean valorFinalizada) {
+        if (valorFinalizada) {
             return "Si";
-        }else return "No";
+        } else return "No";
     }
 }
 

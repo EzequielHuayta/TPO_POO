@@ -84,7 +84,6 @@ public class PeticionController {
         List<PeticionDTO> peticionesCriticasList = new ArrayList<>();
 
         for (PeticionDTO peticion : peticionesList) {
-            System.out.println(peticion);
             for (ResultadoDTO resultado : peticion.getListResultados()) {
                 if(resultado.esCritico()) {
                     peticionesCriticasList.add(peticion);
