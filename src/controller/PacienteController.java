@@ -70,7 +70,7 @@ public class PacienteController {
         return model.getAllPacientes();
     }
 
-    public PacienteDTO[] getAllUsuariosAsArray(){
+    public PacienteDTO[] getAllPacientesAsArray(){
         List<PacienteDTO> pacientesList = model.getAllPacientes();
         PacienteDTO[] pacientesArray = new PacienteDTO[pacientesList.size()];
         pacientesArray = pacientesList.toArray(pacientesArray);

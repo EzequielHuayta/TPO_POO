@@ -2,13 +2,11 @@ package view.practica;
 
 import controller.PracticaController;
 import model.practica.PracticaDTO;
-import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
 import utils.ButtonListener;
 import utils.ButtonRenderer;
 import view.MainFrame;
 import view.RefreshableView;
-import view.usuario.UsuarioFormView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -18,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class PracticaListView extends JPanel implements RefreshableView {
-
 
     private final MainFrame mainFrame = MainFrame.getInstance();
     private final PracticaController practicaController = PracticaController.getInstance();
@@ -37,7 +34,7 @@ public class PracticaListView extends JPanel implements RefreshableView {
             mainFrame.goBack();
         });
 
-        JButton createUserButton = new JButton("Crear practica");
+        JButton createUserButton = new JButton("Crear práctica");
         createUserButton.addActionListener(e -> {
             mainFrame.addPanel(new PracticaFormView(), "practicaform");
             mainFrame.showPanel("practicaform");
@@ -55,17 +52,16 @@ public class PracticaListView extends JPanel implements RefreshableView {
         String[] columnNames = {"Codigo", "Nombre", "Grupo", "Valores Criticos", "Valores Reservados", "Cant. Horas Resultado", "Habilitado", "Acciones"};
         java.util.List<PracticaDTO> practicas = practicaController.getAllPracticas();
         Object[][] data = new Object[practicas.size()][8];
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         for (int i = 0; i < practicas.size(); i++) {
             PracticaDTO practica = practicas.get(i);
-            data[i][0] = practica.getCodigoPractica();
-            data[i][1] = practica.getNombrePractica();
+            data[i][0] = practica.getCodigo();
+            data[i][1] = practica.getNombre();
             data[i][2] = practica.getGrupo();
             data[i][3] = practica.getValoresCriticos();
             data[i][4] = practica.getValoresReservados();
             data[i][5] = practica.getCantidadHorasResultados();
-            data[i][6] = practica.isHabilitada();
+            data[i][6] = habilitadaToString(practica.isHabilitada());
             data[i][7] = "Acciones";
         }
 
@@ -83,15 +79,15 @@ public class PracticaListView extends JPanel implements RefreshableView {
         userTable.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), tableModel, new ButtonListener() {
             @Override
             public void onEditButtonClicked(int codigoPractica) {
-                mainFrame.addPanel(new PracticaFormView(practicaController.getCodigoPractica(codigoPractica)), "practicaform");
+                mainFrame.addPanel(new PracticaFormView(practicaController.getPracticaByCodigo(codigoPractica)), "practicaform");
                 mainFrame.showPanel("practicaform");
             }
 
             @Override
             public void onDeleteButtonClicked(int codigoPractica) {
-                int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este usuario?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar esta práctica?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    practicaController.deleteUsuario(codigoPractica);
+                    practicaController.deletePractica(codigoPractica);
                 }
             }
         }));
@@ -110,23 +106,28 @@ public class PracticaListView extends JPanel implements RefreshableView {
         tableModel.setRowCount(0);
 
         List<PracticaDTO> practicas = practicaController.getAllPracticas();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         for (PracticaDTO practica : practicas) {
             Object[] row = {
-                    practica.getCodigoPractica(),
-                    practica.getNombrePractica(),
+                    practica.getCodigo(),
+                    practica.getNombre(),
                     practica.getGrupo(),
                     practica.getValoresCriticos(),
                     practica.getValoresReservados(),
                     practica.getCantidadHorasResultados(),
-                    practica.isHabilitada(),
+                    habilitadaToString(practica.isHabilitada()),
                     "Acciones"
             };
             tableModel.addRow(row);
         }
 
         tableModel.fireTableDataChanged();
+    }
+
+    private String habilitadaToString(boolean valorHabilitada){
+        if(valorHabilitada){
+            return "Si";
+        }else return "No";
     }
 }
 

@@ -3,7 +3,7 @@ package view.resultados;
 import controller.PracticaController;
 import controller.ResultadosController;
 import model.practica.PracticaDTO;
-import model.resultadopeticion.ResultadoPeticionDTO;
+import model.resultado.ResultadoDTO;
 import view.MainFrame;
 
 import javax.swing.*;
@@ -33,7 +33,7 @@ public class ResultadoFormView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public ResultadoFormView(ResultadoPeticionDTO resultado) {
+    public ResultadoFormView(ResultadoDTO resultado) {
         initializeView();
         // Botón editar resultado
         JPanel buttonPanel = new JPanel();
@@ -93,7 +93,7 @@ public class ResultadoFormView extends JPanel {
 
         List<PracticaDTO> practicasList = practicaController.getAllPracticas();
         for (PracticaDTO practica : practicasList) {
-            practicaComboBox.addItem(practica.getNombrePractica());
+            practicaComboBox.addItem(practica.getNombre());
         }
     }
 

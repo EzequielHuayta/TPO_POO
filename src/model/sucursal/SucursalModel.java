@@ -28,7 +28,6 @@ public class SucursalModel extends GenericDAO<SucursalDTO> {
         return 0;
     }
 
-
     private boolean verifyInUseDireccion(String email, int numero) {
         List<SucursalDTO> sucursales = readAll();
         for (SucursalDTO sucursal : sucursales) {

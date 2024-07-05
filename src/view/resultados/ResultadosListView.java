@@ -13,8 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.List;
-import model.resultadopeticion.ResultadoPeticionDTO;
-import view.usuario.UsuarioFormView;
+import model.resultado.ResultadoDTO;
 
 public class ResultadosListView extends JPanel implements RefreshableView {
 
@@ -56,11 +55,11 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
     private void createTable(ResultadosController resultadosController) {
         String[] columnNames = {"ID", "Practicas", "valor","Acciones"};
-        List<ResultadoPeticionDTO> resultados = resultadosController.getAllResultados();
+        List<ResultadoDTO> resultados = resultadosController.getAllResultados();
         Object[][] data = new Object[resultados.size()][4];
 
         for (int i = 0; i < resultados.size(); i++) {
-            ResultadoPeticionDTO resultado = resultados.get(i);
+            ResultadoDTO resultado = resultados.get(i);
             data[i][0] = resultado.getId();
             data[i][1] = resultado.getNombrePractica();
             data[i][2] = resultado.getValor();
@@ -107,9 +106,9 @@ public class ResultadosListView extends JPanel implements RefreshableView {
     public void onRefresh() {
         tableModel.setRowCount(0);
 
-        List<ResultadoPeticionDTO> resultados = resultadosController.getAllResultados();
+        List<ResultadoDTO> resultados = resultadosController.getAllResultados();
 
-        for (ResultadoPeticionDTO resultado : resultados) {
+        for (ResultadoDTO resultado : resultados) {
             Object[] row = {
                     resultado.getId(),
                     resultado.getNombrePractica(),

@@ -1,8 +1,8 @@
-package model.resultadopeticion;
+package model.resultado;
 
 import model.practica.PracticaDTO;
 
-public class ResultadoPeticionDTO {
+public class ResultadoDTO {
 
     private int id;
 
@@ -10,7 +10,7 @@ public class ResultadoPeticionDTO {
 
     private int valor;
 
-    public ResultadoPeticionDTO(int id, PracticaDTO tipoPractica, int valor) {
+    public ResultadoDTO(int id, PracticaDTO tipoPractica, int valor) {
         this.id = id;
         this.tipoPractica = tipoPractica;
         this.valor = valor;
@@ -25,7 +25,7 @@ public class ResultadoPeticionDTO {
     }
 
     public String getNombrePractica() {
-        return tipoPractica.getNombrePractica();
+        return tipoPractica.getNombre();
     }
     public int getValor() {
         return valor;

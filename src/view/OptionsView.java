@@ -2,6 +2,7 @@ package view;
 
 import controller.UsuarioController;
 import view.paciente.PacienteListView;
+import view.peticion.PeticionListView;
 import view.practica.PracticaListView;
 import view.resultados.ResultadosListView;
 import view.sucursal.SucursalListView;
@@ -46,7 +47,7 @@ public class OptionsView extends JPanel {
 
         JButton listUsersButton = new JButton("Listar Usuarios");
         JButton listPracticesButton = new JButton("Listar Prácticas");
-        JButton listCriticalPracticesButton = new JButton("Listar Prácticas con Resultados Críticos");
+        JButton listarPeticiones = new JButton("Listar Peticiones");
         JButton listPatientsButton = new JButton("Listar Pacientes");
         JButton listSucursalesButton = new JButton("Listar Sucursales");
         JButton listResultsButton = new JButton("Listar Resultados");
@@ -59,7 +60,7 @@ public class OptionsView extends JPanel {
             case "ADMINISTRADOR":
                 listUsersButton.setEnabled(true);
                 listPracticesButton.setEnabled(true);
-                listCriticalPracticesButton.setEnabled(true);
+                listarPeticiones.setEnabled(true);
                 listPatientsButton.setEnabled(true);
                 listSucursalesButton.setEnabled(true);
                 listResultsButton.setEnabled(true);
@@ -68,7 +69,7 @@ public class OptionsView extends JPanel {
                 // Receptionists have limited access
                 listUsersButton.setEnabled(true);
                 listPracticesButton.setEnabled(true);
-                listCriticalPracticesButton.setEnabled(true);
+                listarPeticiones.setEnabled(true);
                 listPatientsButton.setEnabled(true);
                 listSucursalesButton.setEnabled(true);
                 listResultsButton.setEnabled(true);
@@ -76,7 +77,7 @@ public class OptionsView extends JPanel {
             case "LABORATORISTA":
                 listUsersButton.setEnabled(false);
                 listPracticesButton.setEnabled(false);
-                listCriticalPracticesButton.setEnabled(false);
+                listarPeticiones.setEnabled(false);
                 listPatientsButton.setEnabled(false);
                 listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(true);
@@ -86,7 +87,7 @@ public class OptionsView extends JPanel {
                 // Default to no access
                 listUsersButton.setEnabled(false);
                 listPracticesButton.setEnabled(false);
-                listCriticalPracticesButton.setEnabled(false);
+                listarPeticiones.setEnabled(false);
                 listPatientsButton.setEnabled(false);
                 listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(false);
@@ -104,7 +105,7 @@ public class OptionsView extends JPanel {
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        panel.add(listCriticalPracticesButton, gridBagConstraints);
+        panel.add(listarPeticiones, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -136,9 +137,9 @@ public class OptionsView extends JPanel {
             mainFrame.showPanel("practicalist");
         });
 
-        listCriticalPracticesButton.addActionListener(e -> {
-            mainFrame.addPanel(new UsuarioListView(), "usuariolist");
-            mainFrame.showPanel("usuariolist");
+        listarPeticiones.addActionListener(e -> {
+            mainFrame.addPanel(new PeticionListView(), "peticionlist");
+            mainFrame.showPanel("peticionlist");
         });
 
         listPatientsButton.addActionListener(e -> {

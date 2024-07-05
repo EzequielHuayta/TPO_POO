@@ -1,5 +1,7 @@
 package model.paciente;
 
+import model.usuario.UsuarioDTO;
+
 public class PacienteDTO {
     private int id;
     private final int dni;
@@ -65,5 +67,23 @@ public class PacienteDTO {
 
     public int getSucursalAsignada() {
         return sucursalAsignada;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PacienteDTO pacienteDTO = (PacienteDTO) obj;
+        return id == pacienteDTO.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 }

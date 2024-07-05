@@ -2,27 +2,24 @@ package controller;
 
 
 import model.practica.PracticaDTO;
-import model.resultadopeticion.ResultadoPeticionDTO;
-import model.resultadopeticion.ResultadoPeticionModel;
-import model.usuario.Rol;
-import model.usuario.UsuarioDTO;
+import model.resultado.ResultadoDTO;
+import model.resultado.ResultadoModel;
 import view.RefreshableView;
 import view.resultados.ResultadosListView;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ResultadosController {
     private static ResultadosController instance;
 
-    private static ResultadoPeticionModel model;
+    private static ResultadoModel model;
 
     private ArrayList<RefreshableView> attachedViews;
 
 
     private ResultadosController() {
-        model = new ResultadoPeticionModel();
+        model = new ResultadoModel();
         attachedViews = new ArrayList<>();
     }
 
@@ -42,14 +39,14 @@ public class ResultadosController {
 
     }
 
-    public List<ResultadoPeticionDTO> getAllResultados() {
+    public List<ResultadoDTO> getAllResultados() {
         return model.getAllResultados();
     }
 
-    public ResultadoPeticionDTO getResultadoByID(int id) {
-        List<ResultadoPeticionDTO> resultados = model.readAll();
+    public ResultadoDTO getResultadoByID(int id) {
+        List<ResultadoDTO> resultados = model.readAll();
 
-        for (ResultadoPeticionDTO resultado : resultados) {
+        for (ResultadoDTO resultado : resultados) {
             if (resultado.getId() == id) {
                 return resultado;
             }
@@ -58,13 +55,13 @@ public class ResultadosController {
     }
 
     public void addResultado(PracticaDTO practicas, int valor) {
-        model.create(new ResultadoPeticionDTO(model.getLatestId(), practicas, valor));
+        model.create(new ResultadoDTO(model.getLatestId(), practicas, valor));
 
         refreshViews();
     }
 
     public void updateResultado(int id, PracticaDTO practica, int valor) {
-        model.update(new ResultadoPeticionDTO(id, practica, valor));
+        model.update(new ResultadoDTO(id, practica, valor));
         refreshViews();
     }
 
