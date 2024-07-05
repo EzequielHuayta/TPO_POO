@@ -81,4 +81,8 @@ public class ResultadosController {
         resultadosArray = resultadosList.toArray(resultadosArray);
         return resultadosArray;
     }
+
+    public int getLastCreatedID(){
+        return model.getLatestId()-1;
+    }
 }

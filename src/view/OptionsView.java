@@ -66,13 +66,12 @@ public class OptionsView extends JPanel {
                 listResultsButton.setEnabled(true);
                 break;
             case "RECEPCION":
-                // Receptionists have limited access
-                listUsersButton.setEnabled(true);
-                listPracticesButton.setEnabled(true);
+                listUsersButton.setEnabled(false);
+                listPracticesButton.setEnabled(false);
                 listarPeticiones.setEnabled(true);
-                listPatientsButton.setEnabled(true);
-                listSucursalesButton.setEnabled(true);
-                listResultsButton.setEnabled(true);
+                listPatientsButton.setEnabled(false);
+                listSucursalesButton.setEnabled(false);
+                listResultsButton.setEnabled(false);
                 break;
             case "LABORATORISTA":
                 listUsersButton.setEnabled(false);
@@ -81,10 +80,9 @@ public class OptionsView extends JPanel {
                 listPatientsButton.setEnabled(false);
                 listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(true);
-
                 break;
             default:
-                // Default to no access
+                // Default should NOT exist
                 listUsersButton.setEnabled(false);
                 listPracticesButton.setEnabled(false);
                 listarPeticiones.setEnabled(false);

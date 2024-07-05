@@ -82,6 +82,14 @@ public class PeticionDTO {
         return paciente;
     }
 
+    public void addResultado(ResultadoDTO resultadoDTO) {
+        listResultados.add(resultadoDTO);
+    }
+
+    public void removeResultado(ResultadoDTO resultadoDTO) {
+        listResultados.remove(resultadoDTO);
+    }
+
     @Override
     public String toString() {
         return id + " - " + paciente.getNombre();

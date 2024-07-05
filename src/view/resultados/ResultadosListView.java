@@ -2,6 +2,9 @@ package view.resultados;
 
 import controller.ResultadosController;
 
+import controller.UsuarioController;
+import model.usuario.Rol;
+import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
 import utils.ButtonListener;
 import utils.ButtonRenderer;
@@ -20,7 +23,9 @@ public class ResultadosListView extends JPanel implements RefreshableView {
     private final MainFrame mainFrame = MainFrame.getInstance();
 
     private final ResultadosController resultadosController = ResultadosController.getInstance();
+    private final UsuarioController usuarioController = UsuarioController.getInstance();
     private DefaultTableModel tableModel;
+    private UsuarioDTO loggedUser;
 
     public ResultadosListView() {
         // Controller
@@ -47,12 +52,15 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         toolBar.add(createResult, BorderLayout.EAST);
         add(toolBar, BorderLayout.NORTH);
 
-        createTable(resultadosController);
+        loggedUser = usuarioController.getLoggedUser();
+        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+            createAdminTable(resultadosController);
+        }else {
+            createTable(resultadosController);
+        }
     }
 
-
-
-    private void createTable(ResultadosController resultadosController) {
+    private void createAdminTable(ResultadosController resultadosController) {
         String[] columnNames = {"ID", "Tipo de practica", "Valor", "Peticion Asociada", "Acciones"};
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
         Object[][] data = new Object[resultados.size()][5];
@@ -102,23 +110,61 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    private void createTable(ResultadosController resultadosController) {
+        String[] columnNames = {"ID", "Tipo de practica", "Valor", "Peticion Asociada"};
+        List<ResultadoDTO> resultados = resultadosController.getAllResultados();
+        Object[][] data = new Object[resultados.size()][4];
+
+        for (int i = 0; i < resultados.size(); i++) {
+            ResultadoDTO resultado = resultados.get(i);
+            data[i][0] = resultado.getId();
+            data[i][1] = resultado.getTipoPractica().getNombre();
+            data[i][2] = resultado.getValor();
+            data[i][3] = resultado.getPeticionAsociada().getId();
+        }
+
+        tableModel = new DefaultTableModel(data, columnNames);
+        JTable resultsTable = new JTable(tableModel) {
+            // Nothing to do here
+        };
+
+        // Adjusting column sizes
+        TableColumnModel columnModel = resultsTable.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(150);
+
+        JScrollPane scrollPane = new JScrollPane(resultsTable);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
     @Override
     public void onRefresh() {
         tableModel.setRowCount(0);
 
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
 
-        for (ResultadoDTO resultado : resultados) {
-            Object[] row = {
-                    resultado.getId(),
-                    resultado.getTipoPractica().getNombre(),
-                    resultado.getValor(),
-                    resultado.getPeticionAsociada().getId(),
-                    "Acciones"
-            };
-            tableModel.addRow(row);
+        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+            for (ResultadoDTO resultado : resultados) {
+                Object[] row = {
+                        resultado.getId(),
+                        resultado.getTipoPractica().getNombre(),
+                        resultado.getValor(),
+                        resultado.getPeticionAsociada().getId(),
+                        "Acciones"
+                };
+                tableModel.addRow(row);
+            }
+        }else {
+            for (ResultadoDTO resultado : resultados) {
+                Object[] row = {
+                        resultado.getId(),
+                        resultado.getTipoPractica().getNombre(),
+                        resultado.getValor(),
+                        resultado.getPeticionAsociada().getId(),
+                };
+                tableModel.addRow(row);
+            }
         }
-
         tableModel.fireTableDataChanged();
     }
 }
