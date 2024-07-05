@@ -23,7 +23,6 @@ public class ResultadosListView extends JPanel implements RefreshableView {
     private DefaultTableModel tableModel;
 
     public ResultadosListView() {
-
         // Controller
         resultadosController.attachView(this);
 
@@ -54,16 +53,17 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
 
     private void createTable(ResultadosController resultadosController) {
-        String[] columnNames = {"ID", "Practicas", "valor","Acciones"};
+        String[] columnNames = {"ID", "Tipo de practica", "Valor", "Peticion Asociada", "Acciones"};
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
         Object[][] data = new Object[resultados.size()][4];
 
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoDTO resultado = resultados.get(i);
             data[i][0] = resultado.getId();
-            data[i][1] = resultado.getNombrePractica();
+            data[i][1] = resultado.getTipoPractica().getNombre();
             data[i][2] = resultado.getValor();
-            data[i][3] = "Acciones";
+            data[i][3] = resultado.getPeticionAsociada().getId();
+            data[i][4] = "Acciones";
         }
 
         tableModel = new DefaultTableModel(data, columnNames);
@@ -71,7 +71,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         JTable resultsTable = new JTable(tableModel) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 3;
+                return column == 4;
             }
 
         };
@@ -111,8 +111,9 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         for (ResultadoDTO resultado : resultados) {
             Object[] row = {
                     resultado.getId(),
-                    resultado.getNombrePractica(),
+                    resultado.getTipoPractica().getNombre(),
                     resultado.getValor(),
+                    resultado.getPeticionAsociada().getId(),
                     "Acciones"
             };
             tableModel.addRow(row);
@@ -121,4 +122,3 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         tableModel.fireTableDataChanged();
     }
 }
-

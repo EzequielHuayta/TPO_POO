@@ -1,27 +1,37 @@
 package view.resultados;
 
+import controller.PeticionController;
 import controller.PracticaController;
 import controller.ResultadosController;
+import model.paciente.PacienteDTO;
+import model.peticion.PeticionDTO;
 import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
+import utils.ABMResult;
 import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
-
 
 public class ResultadoFormView extends JPanel {
     private JButton backButton;
     private JButton createButton;
     private JToolBar toolBar;
-    private JComboBox<String> practicaComboBox;
+
+    private JComboBox<PracticaDTO> practicaComboBox;
+    private JComboBox<PeticionDTO> peticionComboBox;
     private JTextField valorField;
+
     private ResultadosController resultadosController;
-
     private PracticaController practicaController;
-    private final MainFrame mainFrame = MainFrame.getInstance();
+    private PeticionController peticionController;
+    private PracticaDTO[] practicasArray;
+    private PeticionDTO[] peticionesArray;
 
+    private final MainFrame mainFrame = MainFrame.getInstance();
 
     public ResultadoFormView() {
         initializeView();
@@ -41,7 +51,8 @@ public class ResultadoFormView extends JPanel {
         createButton.addActionListener(e -> updateResultado(resultado.getId()));
         buttonPanel.add(createButton);
 
-        practicaComboBox.setSelectedItem(resultado.getNombrePractica());
+        practicaComboBox.setSelectedItem(practicaController.getPracticaByCodigo(resultado.getTipoPractica().getCodigo()));
+        peticionComboBox.setSelectedItem(peticionController.getPeticionByID(resultado.getPeticionAsociada().getId()));
         valorField.setText(Integer.toString(resultado.getValor()));
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -50,6 +61,9 @@ public class ResultadoFormView extends JPanel {
         // Controllers
         resultadosController = ResultadosController.getInstance();
         practicaController = PracticaController.getInstance();
+        peticionController = PeticionController.getInstance();
+        practicasArray = practicaController.getAllPracticasAsArray();
+        peticionesArray = peticionController.getAllPeticionesArray();
 
         // UI
         setLayout(new BorderLayout());
@@ -67,65 +81,73 @@ public class ResultadoFormView extends JPanel {
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
-        // Practicas
+        // Valor
         gbc.gridx = 0;
         gbc.gridy = 0;
-        formPanel.add(new JLabel("Practicas:"), gbc);
-
-        practicaComboBox = new JComboBox<>();
-        populatePracticaComboBox();
-        gbc.gridx = 1;
-        formPanel.add(practicaComboBox, gbc);
-        // valor
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        formPanel.add(new JLabel("valor:"), gbc);
+        formPanel.add(new JLabel("Valor:"), gbc);
         valorField = new JTextField(20);
+        valorField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char c = e.getKeyChar();
+                if (!Character.isDigit(c)) {
+                    e.consume();
+                }
+            }
+        });
         gbc.gridx = 1;
         formPanel.add(valorField, gbc);
-
+        // Practicas
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        formPanel.add(new JLabel("Tipo de practica:"), gbc);
+        practicaComboBox = new JComboBox<>(practicasArray);
+        gbc.gridx = 1;
+        formPanel.add(practicaComboBox, gbc);
         add(formPanel, BorderLayout.CENTER);
-    }
-
-    private void populatePracticaComboBox() {
-
-        practicaComboBox.removeAllItems();
-
-        List<PracticaDTO> practicasList = practicaController.getAllPracticas();
-        for (PracticaDTO practica : practicasList) {
-            practicaComboBox.addItem(practica.getNombre());
-        }
+        // Practicas
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        formPanel.add(new JLabel("Petición asociada:"), gbc);
+        peticionComboBox = new JComboBox<>(peticionesArray);
+        gbc.gridx = 1;
+        formPanel.add(peticionComboBox, gbc);
+        add(formPanel, BorderLayout.CENTER);
     }
 
     private void createResultado() {
         if (!validateNonEmptyFields(valorField)){
             return;
         }
-        PracticaDTO selectedPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
+        PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
+        PeticionDTO peticionAsociada = (PeticionDTO) peticionComboBox.getSelectedItem();
         int valor = Integer.parseInt(valorField.getText());
-
-        resultadosController.addResultado(selectedPractica, valor);
-        JOptionPane.showMessageDialog(this, "Resultado creado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        mainFrame.goBack();
+        ABMResult abmResult = resultadosController.addResultado(new ResultadoDTO(tipoPractica, valor, peticionAsociada));
+        if (abmResult.getResult()) {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.goBack();
+        } else {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    private void updateResultado(int idUsuario) {
+    private void updateResultado(int id) {
         if (!validateNonEmptyFields(valorField)){
             return;
         }
-        PracticaDTO selectedPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
-        String valor = valorField.getText();
-        if(valor == null ){
-            return;
+        PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
+        PeticionDTO peticionAsociada = (PeticionDTO) peticionComboBox.getSelectedItem();
+        int valor = Integer.parseInt(valorField.getText());
+        ABMResult abmResult = resultadosController.updateResultado(new ResultadoDTO(id, tipoPractica, valor, peticionAsociada));
+        if (abmResult.getResult()) {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            mainFrame.goBack();
+        } else {
+            JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        resultadosController.updateResultado(idUsuario, selectedPractica, Integer.parseInt(valor));
-        JOptionPane.showMessageDialog(this, "Usuario modificado con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        mainFrame.goBack();
     }
 
-
     private boolean validateNonEmptyFields(JTextField... fields){
-        // Validar campos vacios
         for (JTextField field : fields) {
             if (field.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -134,7 +156,6 @@ public class ResultadoFormView extends JPanel {
         }
         return true;
     }
-
 }
 
 

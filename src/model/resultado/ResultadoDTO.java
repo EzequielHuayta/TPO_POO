@@ -27,16 +27,16 @@ public class ResultadoDTO {
         return id;
     }
 
+    public void setId(int nuevoID) {
+        id = nuevoID;
+    }
+
     public PracticaDTO getTipoPractica() {
         return tipoPractica;
     }
 
     public PeticionDTO getPeticionAsociada() {
         return peticionAsociada;
-    }
-
-    public String getNombrePractica() {
-        return tipoPractica.getNombre();
     }
 
     public int getValor() {

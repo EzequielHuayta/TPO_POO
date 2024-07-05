@@ -1,7 +1,6 @@
 package model.resultado;
 
 import com.google.gson.reflect.TypeToken;
-import model.practica.PracticaDTO;
 import persist.GenericDAO;
 import utils.ABMResult;
 
@@ -24,10 +23,6 @@ public class ResultadoModel extends GenericDAO<ResultadoDTO> {
         return 0;
     }
 
-    public List<ResultadoDTO> getAllResultados() {
-        return readAll();
-    }
-
     public int getLatestId() {
         List<ResultadoDTO> resultados = readAll();
         if(!resultados.isEmpty()){
@@ -36,30 +31,24 @@ public class ResultadoModel extends GenericDAO<ResultadoDTO> {
         return 0;
     }
 
-//    public ABMResult addPractica(PracticaDTO practica){
-//        practica.setCodigo(getLatestCodigo());
-//        if(verifyInUseNombre(practica.getNombre(), -1)){
-//            return new ABMResult(false, "Ya existe una práctica con ese nombre");
-//        }
-//        create(practica);
-//        return new ABMResult(true, "Práctica creada con éxito");
-//    }
-//
-//    public ABMResult updatePractica(PracticaDTO practica){
-//        if(verifyInUseNombre(practica.getNombre(), practica.getCodigo())){
-//            return new ABMResult(false, "Ya existe una práctica con ese nombre");
-//        }
-//        update(practica);
-//        return new ABMResult(true, "Práctica actualizada con éxito");
-//    }
-//
-//    public ABMResult deletePractica(int numero){
-//        delete(numero);
-//        return new ABMResult(true, "Práctica eliminada con éxito");
-//    }
-//
-//    public List<PracticaDTO> getAllPracticas() {
-//        return readAll();
-//    }
+    public ABMResult addResultado(ResultadoDTO resultado){
+        resultado.setId(getLatestId());
+        create(resultado);
+        return new ABMResult(true, "Resultado creado con éxito");
+    }
+
+    public ABMResult updateResultado(ResultadoDTO resultado){
+        update(resultado);
+        return new ABMResult(true, "Resultado actualizado con éxito");
+    }
+
+    public ABMResult deleteResultado(int numero){
+        delete(numero);
+        return new ABMResult(true, "Resultado eliminado con éxito");
+    }
+
+    public List<ResultadoDTO> getAllResultados() {
+        return readAll();
+    }
 
 }

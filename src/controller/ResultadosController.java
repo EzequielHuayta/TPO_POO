@@ -1,9 +1,8 @@
 package controller;
 
-
-import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
 import model.resultado.ResultadoModel;
+import utils.ABMResult;
 import view.RefreshableView;
 import view.resultados.ResultadosListView;
 
@@ -34,35 +33,8 @@ public class ResultadosController {
         attachedViews.add(resultadosListView);
     }
 
-    public void detachView(ResultadosListView resultadosListView) {
-        attachedViews.remove(resultadosListView);
-
-    }
-
-    public List<ResultadoDTO> getAllResultados() {
-        return model.getAllResultados();
-    }
-
-    public ResultadoDTO getResultadoByID(int id) {
-        List<ResultadoDTO> resultados = model.readAll();
-
-        for (ResultadoDTO resultado : resultados) {
-            if (resultado.getId() == id) {
-                return resultado;
-            }
-        }
-        return null;
-    }
-
-    public void addResultado(PracticaDTO practicas, int valor) {
-        model.create(new ResultadoDTO(model.getLatestId(), practicas, valor));
-
-        refreshViews();
-    }
-
-    public void updateResultado(int id, PracticaDTO practica, int valor) {
-        model.update(new ResultadoDTO(id, practica, valor));
-        refreshViews();
+    public void detachView(RefreshableView view){
+        attachedViews.remove(view);
     }
 
     private void refreshViews(){
@@ -71,8 +43,42 @@ public class ResultadosController {
         }
     }
 
-    public void deleteResultado(int id) {
-        model.delete(id);
-        refreshViews();
+    public ABMResult addResultado(ResultadoDTO resultadoDTO) {
+        ABMResult abmResult = model.addResultado(resultadoDTO);
+        if(abmResult.getResult()){
+            refreshViews();
+        }
+        return abmResult;
+    }
+
+    public ABMResult deleteResultado(int id) {
+        ABMResult abmResult = model.deleteResultado(id);
+        if(abmResult.getResult()){
+            refreshViews();
+        }
+        return abmResult;
+    }
+
+    public ABMResult updateResultado(ResultadoDTO resultadoDTO) {
+        ABMResult abmResult = model.updateResultado(resultadoDTO);
+        if(abmResult.getResult()){
+            refreshViews();
+        }
+        return abmResult;
+    }
+
+    public ResultadoDTO getResultadoByID(int id){
+        return model.read(id);
+    }
+
+    public List<ResultadoDTO> getAllResultados(){
+        return model.getAllResultados();
+    }
+
+    public ResultadoDTO[] getAllPacientesAsArray(){
+        List<ResultadoDTO> resultadosList = model.getAllResultados();
+        ResultadoDTO[] resultadosArray = new ResultadoDTO[resultadosList.size()];
+        resultadosArray = resultadosList.toArray(resultadosArray);
+        return resultadosArray;
     }
 }

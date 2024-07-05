@@ -81,4 +81,22 @@ public class PeticionDTO {
     public PacienteDTO getPaciente() {
         return paciente;
     }
+
+    @Override
+    public String toString() {
+        return id + " - " + paciente.getNombre();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        PeticionDTO peticionDTO = (PeticionDTO) obj;
+        return id == peticionDTO.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
 }
