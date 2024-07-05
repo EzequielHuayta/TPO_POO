@@ -1,5 +1,6 @@
 package view.resultados;
 
+import controller.PracticaController;
 import controller.ResultadosController;
 
 import controller.UsuarioController;
@@ -24,6 +25,8 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
     private final ResultadosController resultadosController = ResultadosController.getInstance();
     private final UsuarioController usuarioController = UsuarioController.getInstance();
+
+    private final PracticaController practicaController = PracticaController.getInstance();
     private DefaultTableModel tableModel;
     private UsuarioDTO loggedUser;
 
@@ -67,9 +70,10 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoDTO resultado = resultados.get(i);
+            boolean isReservado = resultado.esReservado();
             data[i][0] = resultado.getId();
             data[i][1] = resultado.getTipoPractica().getNombre();
-            data[i][2] = resultado.getValor();
+            data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
             data[i][3] = resultado.getPeticionAsociada().getId();
             data[i][4] = "Acciones";
         }
@@ -114,12 +118,13 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         String[] columnNames = {"ID", "Tipo de practica", "Valor", "Peticion Asociada"};
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
         Object[][] data = new Object[resultados.size()][4];
-
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoDTO resultado = resultados.get(i);
+            boolean isReservado = resultado.esReservado();
+
             data[i][0] = resultado.getId();
             data[i][1] = resultado.getTipoPractica().getNombre();
-            data[i][2] = resultado.getValor();
+            data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
             data[i][3] = resultado.getPeticionAsociada().getId();
         }
 
@@ -145,10 +150,12 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
         if(loggedUser.getRol() == Rol.ADMINISTRADOR){
             for (ResultadoDTO resultado : resultados) {
+                boolean isReservado = resultado.esReservado();
+
                 Object[] row = {
                         resultado.getId(),
                         resultado.getTipoPractica().getNombre(),
-                        resultado.getValor(),
+                        isReservado ? "Retirar por sucursal" : resultado.getValor(),
                         resultado.getPeticionAsociada().getId(),
                         "Acciones"
                 };
