@@ -55,7 +55,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
     private void createTable(ResultadosController resultadosController) {
         String[] columnNames = {"ID", "Tipo de practica", "Valor", "Peticion Asociada", "Acciones"};
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
-        Object[][] data = new Object[resultados.size()][4];
+        Object[][] data = new Object[resultados.size()][5];
 
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoDTO resultado = resultados.get(i);
