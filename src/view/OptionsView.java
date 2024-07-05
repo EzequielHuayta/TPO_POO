@@ -69,7 +69,7 @@ public class OptionsView extends JPanel {
                 listUsersButton.setEnabled(false);
                 listPracticesButton.setEnabled(false);
                 listarPeticiones.setEnabled(true);
-                listPatientsButton.setEnabled(false);
+                listPatientsButton.setEnabled(true);
                 listSucursalesButton.setEnabled(false);
                 listResultsButton.setEnabled(false);
                 break;

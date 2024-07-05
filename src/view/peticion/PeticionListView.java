@@ -97,7 +97,7 @@ public class PeticionListView extends JPanel implements RefreshableView {
             data[i][3] = dateFormat.format(peticion.getFechaCalculadaEntrega());
             data[i][4] = peticion.getPaciente().getNombre();
             data[i][5] = practicasToString(peticion.getListPracticas());
-            data[i][6] = finalizadaToString(isPeticionFinalizada(peticion.getListPracticas(), peticion.getListResultados()));
+            data[i][6] = finalizadaToString(peticion.isFinalizada());
             data[i][7] = "Acciones";
         }
 
@@ -152,7 +152,7 @@ public class PeticionListView extends JPanel implements RefreshableView {
                     dateFormat.format(peticion.getFechaCalculadaEntrega()),
                     peticion.getPaciente().getNombre(),
                     practicasToString(peticion.getListPracticas()),
-                    finalizadaToString(isPeticionFinalizada(peticion.getListPracticas(), peticion.getListResultados())),
+                    finalizadaToString(peticion.isFinalizada()),
                     "Acciones"
             };
             tableModel.addRow(row);
@@ -176,13 +176,6 @@ public class PeticionListView extends JPanel implements RefreshableView {
         }
         return practicas.toString();
     }
-
-    private Boolean isPeticionFinalizada(List<PracticaDTO> practicasList, List<ResultadoDTO> resultadosList){
-        if(resultadosList.isEmpty()){
-            return false;
-        } else return practicasList.size() == resultadosList.size();
-    }
-
 
     private String finalizadaToString(boolean valorFinalizada){
         if(valorFinalizada){

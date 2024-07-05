@@ -3,7 +3,6 @@ package view.resultados;
 import controller.PeticionController;
 import controller.PracticaController;
 import controller.ResultadosController;
-import model.paciente.PacienteDTO;
 import model.peticion.PeticionDTO;
 import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
@@ -12,10 +11,8 @@ import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 public class ResultadoFormView extends JPanel {
     private JButton backButton;
@@ -175,5 +172,3 @@ public class ResultadoFormView extends JPanel {
         peticionController.updatePeticion(peticion);
     }
 }
-
-

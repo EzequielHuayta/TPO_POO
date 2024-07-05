@@ -90,6 +90,12 @@ public class PeticionDTO {
         listResultados.remove(resultadoDTO);
     }
 
+    public boolean isFinalizada(){
+        if(listResultados.isEmpty()){
+            return false;
+        } else return listPracticas.size() == listResultados.size();
+    }
+
     @Override
     public String toString() {
         return id + " - " + paciente.getNombre();
