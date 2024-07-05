@@ -2,8 +2,11 @@ package view.paciente;
 
 import controller.PacienteController;
 import controller.SucursalController;
+import controller.UsuarioController;
 import model.paciente.PacienteDTO;
 import model.sucursal.SucursalDTO;
+import model.usuario.Rol;
+import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
 import utils.ButtonListener;
 import utils.ButtonRenderer;
@@ -21,7 +24,10 @@ public class PacienteListView extends JPanel implements RefreshableView {
     private final MainFrame mainFrame = MainFrame.getInstance();
     private final PacienteController pacienteController = PacienteController.getInstance();
     private final SucursalController sucursalController = SucursalController.getInstance();
+    private final UsuarioController usuarioController = UsuarioController.getInstance();
     private DefaultTableModel tableModel;
+    private UsuarioDTO loggedUser;
+
 
     public PacienteListView() {
         // Controller
@@ -47,10 +53,15 @@ public class PacienteListView extends JPanel implements RefreshableView {
         toolBar.add(createUserButton, BorderLayout.EAST);
         add(toolBar, BorderLayout.NORTH);
 
-        createTable(pacienteController);
+        loggedUser = usuarioController.getLoggedUser();
+        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+            createAdminTable(pacienteController);
+        }else {
+            createTable(pacienteController);
+        }
     }
 
-    private void createTable(PacienteController pacienteController) {
+    private void createAdminTable(PacienteController pacienteController) {
         String[] columnNames = {"ID", "Email", "Nombre", "Domicilio", "DNI", "Sexo", "Edad", "Sucursal", "Acciones"};
         List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
         Object[][] data = new Object[pacientes.size()][9];
@@ -104,25 +115,72 @@ public class PacienteListView extends JPanel implements RefreshableView {
         add(scrollPane, BorderLayout.CENTER);
     }
 
+    private void createTable(PacienteController pacienteController) {
+        String[] columnNames = {"ID", "Email", "Nombre", "Domicilio", "DNI", "Sexo", "Edad", "Sucursal"};
+        List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
+        Object[][] data = new Object[pacientes.size()][8];
+
+        for (int i = 0; i < pacientes.size(); i++) {
+            PacienteDTO paciente = pacientes.get(i);
+            data[i][0] = paciente.getId();
+            data[i][1] = paciente.getEmail();
+            data[i][2] = paciente.getNombre();
+            data[i][3] = paciente.getDomicilio();
+            data[i][4] = paciente.getDni();
+            data[i][5] = paciente.getSexo();
+            data[i][6] = paciente.getEdad();
+            data[i][7] = getSucursalNameFromNumber(paciente.getSucursalAsignada());
+        }
+
+        tableModel = new DefaultTableModel(data, columnNames);
+        JTable userTable = new JTable(tableModel) {
+            // Nothing to do here
+        };
+
+        // Adjusting column sizes
+        TableColumnModel columnModel = userTable.getColumnModel();
+        columnModel.getColumn(0).setPreferredWidth(50);
+        columnModel.getColumn(1).setPreferredWidth(150);
+
+        JScrollPane scrollPane = new JScrollPane(userTable);
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
     @Override
     public void onRefresh() {
         tableModel.setRowCount(0);
         List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
-        for (PacienteDTO paciente : pacientes) {
-            Object[] row = {
-                    paciente.getId(),
-                    paciente.getEmail(),
-                    paciente.getNombre(),
-                    paciente.getDomicilio(),
-                    paciente.getDni(),
-                    paciente.getSexo(),
-                    paciente.getEdad(),
-                    getSucursalNameFromNumber(paciente.getSucursalAsignada()),
-                    "Acciones"
-            };
-            tableModel.addRow(row);
-        }
 
+        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+            for (PacienteDTO paciente : pacientes) {
+                Object[] row = {
+                        paciente.getId(),
+                        paciente.getEmail(),
+                        paciente.getNombre(),
+                        paciente.getDomicilio(),
+                        paciente.getDni(),
+                        paciente.getSexo(),
+                        paciente.getEdad(),
+                        getSucursalNameFromNumber(paciente.getSucursalAsignada()),
+                        "Acciones"
+                };
+                tableModel.addRow(row);
+            }
+        }else {
+            for (PacienteDTO paciente : pacientes) {
+                Object[] row = {
+                        paciente.getId(),
+                        paciente.getEmail(),
+                        paciente.getNombre(),
+                        paciente.getDomicilio(),
+                        paciente.getDni(),
+                        paciente.getSexo(),
+                        paciente.getEdad(),
+                        getSucursalNameFromNumber(paciente.getSucursalAsignada()),
+                };
+                tableModel.addRow(row);
+            }
+        }
         tableModel.fireTableDataChanged();
     }
 
