@@ -26,4 +26,13 @@ public class ResultadoPeticionModel extends GenericDAO<ResultadoPeticionDTO> {
     public List<ResultadoPeticionDTO> getAllResultados() {
         return readAll();
     }
+
+    public int getLatestId() {
+        List<ResultadoPeticionDTO> resultados = readAll();
+        if(!resultados.isEmpty()){
+            return resultados.get(resultados.size()-1).getId() + 1;
+        }
+        return 0;
+    }
+
 }

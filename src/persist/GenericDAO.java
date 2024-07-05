@@ -62,7 +62,7 @@ public abstract class GenericDAO<T> {
 
     public void delete(int id) {
         List<T> entities = readAll();
-        entities.removeIf(entity -> getId(entity) == id);
+        entities.removeIf(entity ->  getId(entity) == id);
         writeAll(entities);
     }
 

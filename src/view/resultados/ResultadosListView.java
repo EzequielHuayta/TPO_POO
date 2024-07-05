@@ -2,6 +2,9 @@ package view.resultados;
 
 import controller.ResultadosController;
 
+import utils.ButtonEditor;
+import utils.ButtonListener;
+import utils.ButtonRenderer;
 import view.MainFrame;
 import view.RefreshableView;
 
@@ -9,10 +12,9 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import model.resultadopeticion.ResultadoPeticionDTO;
+import view.usuario.UsuarioFormView;
 
 public class ResultadosListView extends JPanel implements RefreshableView {
 
@@ -35,8 +37,16 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             mainFrame.goBack();
         });
 
+        JButton createResult = new JButton("Crear resultado");
+        createResult.addActionListener(e -> {
+            mainFrame.addPanel(new ResultadoFormView(), "resultadoForm");
+            mainFrame.showPanel("resultadoForm");
+        });
+
+
         toolBar.setLayout(new BorderLayout());
         toolBar.add(backButton, BorderLayout.WEST);
+        toolBar.add(createResult, BorderLayout.EAST);
         add(toolBar, BorderLayout.NORTH);
 
         createTable(resultadosController);
@@ -45,27 +55,51 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
 
     private void createTable(ResultadosController resultadosController) {
-        String[] columnNames = {"ID", "Practicas", "valor"};
+        String[] columnNames = {"ID", "Practicas", "valor","Acciones"};
         List<ResultadoPeticionDTO> resultados = resultadosController.getAllResultados();
-        Object[][] data = new Object[resultados.size()][8];
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        Object[][] data = new Object[resultados.size()][4];
 
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoPeticionDTO resultado = resultados.get(i);
             data[i][0] = resultado.getId();
-            data[i][1] = resultado.getTipoPractica();
+            data[i][1] = resultado.getNombrePractica();
             data[i][2] = resultado.getValor();
+            data[i][3] = "Acciones";
         }
 
         tableModel = new DefaultTableModel(data, columnNames);
-        JTable userTable = new JTable(tableModel);
+        // Custom JTable implementation
+        JTable resultsTable = new JTable(tableModel) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 3;
+            }
+
+        };
+
+        resultsTable.getColumn("Acciones").setCellRenderer(new ButtonRenderer());
+        resultsTable.getColumn("Acciones").setCellEditor(new ButtonEditor(new JCheckBox(), tableModel, new ButtonListener() {
+            @Override
+            public void onEditButtonClicked(int id) {
+                mainFrame.addPanel(new ResultadoFormView(resultadosController.getResultadoByID(id)), "resultadoForm");
+                mainFrame.showPanel("resultadoForm");
+            }
+
+            @Override
+            public void onDeleteButtonClicked(int id) {
+                int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este resultado?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                if (response == JOptionPane.YES_OPTION) {
+                    resultadosController.deleteResultado(id);
+                }
+            }
+        }));
 
         // Adjusting column sizes
-        TableColumnModel columnModel = userTable.getColumnModel();
+        TableColumnModel columnModel = resultsTable.getColumnModel();
         columnModel.getColumn(0).setPreferredWidth(50);
         columnModel.getColumn(1).setPreferredWidth(150);
 
-        JScrollPane scrollPane = new JScrollPane(userTable);
+        JScrollPane scrollPane = new JScrollPane(resultsTable);
         add(scrollPane, BorderLayout.CENTER);
     }
 
@@ -74,14 +108,13 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         tableModel.setRowCount(0);
 
         List<ResultadoPeticionDTO> resultados = resultadosController.getAllResultados();
-        //SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         for (ResultadoPeticionDTO resultado : resultados) {
             Object[] row = {
                     resultado.getId(),
-                    resultado.getNombrePractica(), //falta modificar esto
-                    resultado.getValor()
-
+                    resultado.getNombrePractica(),
+                    resultado.getValor(),
+                    "Acciones"
             };
             tableModel.addRow(row);
         }
