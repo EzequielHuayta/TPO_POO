@@ -17,6 +17,7 @@ public class PeticionDTO {
     private final List<PracticaDTO> listPracticas;
     private final List<ResultadoDTO> listResultados;
     private final PacienteDTO paciente;
+    private int numeroSucursal;
 
     public PeticionDTO(int id, String obraSocial, Date fechaCarga, List<PracticaDTO> listPracticas, List<ResultadoDTO> listResultados, PacienteDTO paciente) {
         this.id = id;
@@ -25,6 +26,7 @@ public class PeticionDTO {
         this.listPracticas = listPracticas;
         this.listResultados = listResultados;
         this.paciente = paciente;
+        this.numeroSucursal = paciente.getSucursalAsignada();
     }
 
     public PeticionDTO(int id, String obraSocial, List<PracticaDTO> listPracticas, List<ResultadoDTO> listResultados, PacienteDTO paciente) {
@@ -33,6 +35,7 @@ public class PeticionDTO {
         this.listPracticas = listPracticas;
         this.listResultados = listResultados;
         this.paciente = paciente;
+        this.numeroSucursal = paciente.getSucursalAsignada();
     }
 
     public PeticionDTO(String obraSocial, List<PracticaDTO> listPracticas, PacienteDTO paciente) {
@@ -40,6 +43,7 @@ public class PeticionDTO {
         this.listPracticas = listPracticas;
         this.listResultados = new ArrayList<>();
         this.paciente = paciente;
+        this.numeroSucursal = paciente.getSucursalAsignada();
     }
 
     public int getId() {
@@ -80,6 +84,14 @@ public class PeticionDTO {
 
     public PacienteDTO getPaciente() {
         return paciente;
+    }
+
+    public int getNumeroSucursal() {
+        return numeroSucursal;
+    }
+
+    public void setNumeroSucursal(int numeroSucursal) {
+        this.numeroSucursal = numeroSucursal;
     }
 
     public void addResultado(ResultadoDTO resultadoDTO) {

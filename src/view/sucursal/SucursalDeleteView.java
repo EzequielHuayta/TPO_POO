@@ -1,8 +1,12 @@
 package view.sucursal;
 
+import controller.PacienteController;
+import controller.PeticionController;
 import controller.SucursalController;
+import controller.UsuarioController;
+import model.paciente.PacienteDTO;
+import model.peticion.PeticionDTO;
 import model.sucursal.SucursalDTO;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,16 +14,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SucursalDeleteView extends JDialog {
 
     private JToolBar toolBar;
-    private JButton backButton;
     private JButton deleteButton;
     private JComboBox<String> sucursalesComboBox;
     private SucursalController sucursalController;
-    private final MainFrame mainFrame = MainFrame.getInstance();
+    private final PacienteController pacienteController = PacienteController.getInstance();
+    private final PeticionController peticionController = PeticionController.getInstance();
     private Frame parentFrame;
 
     public SucursalDeleteView(Frame parent, SucursalDTO sucursal) {
@@ -75,7 +78,10 @@ public class SucursalDeleteView extends JDialog {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteSucursal(sucursales.get(sucursalesComboBox.getSelectedIndex()).getNumero());
+                int nuevaSucursal = sucursales.get(sucursalesComboBox.getSelectedIndex()).getNumero();
+                replaceSucursalFromPaciente(sucursal.getNumero(), nuevaSucursal);
+                replaceSucursalFromPeticion(sucursal.getNumero(), nuevaSucursal);
+                deleteSucursal(sucursal.getNumero());
             }
         });
         buttonPanel.add(deleteButton);
@@ -90,4 +96,26 @@ public class SucursalDeleteView extends JDialog {
         JOptionPane.showMessageDialog(this, "Sucursal borrada");
         dispose();
     }
+
+
+    private void replaceSucursalFromPaciente(int oldSucursal, int newSucursal){
+        List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
+        for (PacienteDTO pacienteDTO: pacientes){
+            if(pacienteDTO.getSucursalAsignada() == oldSucursal){
+                pacienteDTO.setSucursalAsignada(newSucursal);
+                pacienteController.updatePaciente(pacienteDTO);
+            }
+        }
+    }
+
+    private void replaceSucursalFromPeticion(int oldSucursal, int newSucursal){
+        List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
+        for (PeticionDTO peticionDTO: peticiones){
+            if(peticionDTO.getNumeroSucursal() == oldSucursal){
+                peticionDTO.setNumeroSucursal(newSucursal);
+                peticionController.updatePeticion(peticionDTO);
+            }
+        }
+    }
+
 }

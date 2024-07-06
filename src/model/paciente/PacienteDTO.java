@@ -1,7 +1,5 @@
 package model.paciente;
 
-import model.usuario.UsuarioDTO;
-
 public class PacienteDTO {
     private int id;
     private final int dni;
@@ -10,7 +8,7 @@ public class PacienteDTO {
     private final String domicilio;
     private final char sexo;
     private final int edad;
-    private final int sucursalAsignada;
+    private int sucursalAsignada;
 
     public PacienteDTO(int id, int dni, String nombre, String email, String domicilio, char sexo, int edad, int sucursalAsignada) {
         this.id = id;
@@ -39,6 +37,10 @@ public class PacienteDTO {
 
     public void setId(int nuevoId){
         id = nuevoId;
+    }
+
+    public void setSucursalAsignada(int sucursalAsignada) {
+        this.sucursalAsignada = sucursalAsignada;
     }
 
     public int getDni() {

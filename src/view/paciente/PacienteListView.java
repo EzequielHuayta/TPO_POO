@@ -1,9 +1,11 @@
 package view.paciente;
 
 import controller.PacienteController;
+import controller.PeticionController;
 import controller.SucursalController;
 import controller.UsuarioController;
 import model.paciente.PacienteDTO;
+import model.peticion.PeticionDTO;
 import model.sucursal.SucursalDTO;
 import model.usuario.Rol;
 import model.usuario.UsuarioDTO;
@@ -25,6 +27,7 @@ public class PacienteListView extends JPanel implements RefreshableView {
     private final PacienteController pacienteController = PacienteController.getInstance();
     private final SucursalController sucursalController = SucursalController.getInstance();
     private final UsuarioController usuarioController = UsuarioController.getInstance();
+    private final PeticionController peticionController = PeticionController.getInstance();
     private DefaultTableModel tableModel;
     private UsuarioDTO loggedUser;
 
@@ -101,7 +104,12 @@ public class PacienteListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este paciente?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    pacienteController.deletePaciente(id);
+                    if(hasPeticionesFinalizadas(id)){
+                        JOptionPane.showMessageDialog(mainFrame, "No se permite borrar pacientes con resultados finalizados", "Error", JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        pacienteController.deletePaciente(id);
+
+                    }
                 }
             }
         }));
@@ -189,5 +197,15 @@ public class PacienteListView extends JPanel implements RefreshableView {
         if (sucursal != null) {
             return sucursal.getDireccion();
         } else return "Sin asignar";
+    }
+
+    private boolean hasPeticionesFinalizadas(int pacienteID){
+        List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
+        for(PeticionDTO peticionDTO : peticiones){
+            if (peticionDTO.getPaciente().getId() == pacienteID && peticionDTO.isFinalizada()){
+                return true;
+            }
+        }
+        return false;
     }
 }

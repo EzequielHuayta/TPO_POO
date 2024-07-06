@@ -1,7 +1,9 @@
 package view.sucursal;
 
+import controller.PeticionController;
 import controller.SucursalController;
 import controller.UsuarioController;
+import model.peticion.PeticionDTO;
 import model.sucursal.SucursalDTO;
 import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
@@ -22,6 +24,7 @@ public class SucursalListView extends JPanel implements RefreshableView {
     private final MainFrame mainFrame = MainFrame.getInstance();
     private final SucursalController sucursalController = SucursalController.getInstance();
     private final UsuarioController usuarioController = UsuarioController.getInstance();
+    private final PeticionController peticionController = PeticionController.getInstance();
     private DefaultTableModel tableModel;
 
     public SucursalListView() {
@@ -86,11 +89,12 @@ public class SucursalListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar esta sucursal?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    Frame parentFrame = mainFrame;  // Asegúrate de obtener el Frame correcto
-
-                    // Crear el diálogo y mostrarlo
-                    SucursalDeleteView dialog = new SucursalDeleteView(parentFrame, sucursalController.getSucursalByNumero(id));
-                    dialog.setVisible(true);
+                    if(hasPeticionesFinalizadas(id)){
+                        JOptionPane.showMessageDialog(mainFrame, "No se permite borrar sucursales con resultados finalizados", "Error", JOptionPane.ERROR_MESSAGE);
+                    }else{
+                        SucursalDeleteView dialog = new SucursalDeleteView(mainFrame, sucursalController.getSucursalByNumero(id));
+                        dialog.setVisible(true);
+                    }
                 }
             }
         }));
@@ -128,5 +132,15 @@ public class SucursalListView extends JPanel implements RefreshableView {
         if (usuario != null) {
             return usuario.getNombre();
         } else return "Sin asignar";
+    }
+
+    private boolean hasPeticionesFinalizadas(int numeroSucursal){
+        List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
+        for(PeticionDTO peticionDTO : peticiones){
+            if (peticionDTO.getNumeroSucursal() == numeroSucursal && peticionDTO.isFinalizada()){
+                return true;
+            }
+        }
+        return false;
     }
 }
