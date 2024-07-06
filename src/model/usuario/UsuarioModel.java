@@ -22,8 +22,8 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
 
     public int getLatestId() {
         List<UsuarioDTO> usuarios = readAll();
-        if(!usuarios.isEmpty()){
-            return usuarios.get(usuarios.size()-1).getId() + 1;
+        if (!usuarios.isEmpty()) {
+            return usuarios.get(usuarios.size() - 1).getId() + 1;
         }
         return 0;
     }
@@ -58,28 +58,28 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
         return false;
     }
 
-    public ABMResult addUsuario(UsuarioDTO usuarioDTO){
+    public ABMResult addUsuario(UsuarioDTO usuarioDTO) {
         usuarioDTO.setId(getLatestId());
-        if(verifyInUseEmail(usuarioDTO.getEmail(), -1)){
+        if (verifyInUseEmail(usuarioDTO.getEmail(), -1)) {
             return new ABMResult(false, "Ya existe un usuario registrado con ese email");
-        }else if(verifyInUseDNI(usuarioDTO.getDni(), -1)){
+        } else if (verifyInUseDNI(usuarioDTO.getDni(), -1)) {
             return new ABMResult(false, "Ya existe un usuario registrado con ese DNI");
         }
         create(usuarioDTO);
         return new ABMResult(true, "Usuario creado con éxito");
     }
 
-    public ABMResult updateUsuario(UsuarioDTO usuarioDTO){
-        if(verifyInUseEmail(usuarioDTO.getEmail(), usuarioDTO.getId())){
+    public ABMResult updateUsuario(UsuarioDTO usuarioDTO) {
+        if (verifyInUseEmail(usuarioDTO.getEmail(), usuarioDTO.getId())) {
             return new ABMResult(false, "Ya existe un usuario registrado con ese email");
-        }else if(verifyInUseDNI(usuarioDTO.getDni(), usuarioDTO.getId())){
+        } else if (verifyInUseDNI(usuarioDTO.getDni(), usuarioDTO.getId())) {
             return new ABMResult(false, "Ya existe un usuario registrado con ese DNI");
         }
         update(usuarioDTO);
         return new ABMResult(true, "Usuario actualizado con éxito");
     }
 
-    public ABMResult deleteUsuario(int id){
+    public ABMResult deleteUsuario(int id) {
         delete(id);
         return new ABMResult(true, "Usuario eliminado con éxito");
     }

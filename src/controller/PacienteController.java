@@ -12,6 +12,7 @@ public class PacienteController {
     private static PacienteController instance;
     private final PacienteModel model;
     private final ArrayList<RefreshableView> attachedViews;
+
     private PacienteController() {
         model = new PacienteModel();
         attachedViews = new ArrayList<>();
@@ -24,23 +25,23 @@ public class PacienteController {
         return instance;
     }
 
-    public void attachView(RefreshableView view){
+    public void attachView(RefreshableView view) {
         attachedViews.add(view);
     }
 
-    public void detachView(RefreshableView view){
+    public void detachView(RefreshableView view) {
         attachedViews.remove(view);
     }
 
-    private void refreshViews(){
-        for (RefreshableView view : attachedViews){
+    private void refreshViews() {
+        for (RefreshableView view : attachedViews) {
             view.onRefresh();
         }
     }
 
     public ABMResult addPaciente(PacienteDTO pacienteDTO) {
         ABMResult abmResult = model.addPaciente(pacienteDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -48,7 +49,7 @@ public class PacienteController {
 
     public ABMResult deletePaciente(int id) {
         ABMResult abmResult = model.deletePaciente(id);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -56,21 +57,21 @@ public class PacienteController {
 
     public ABMResult updatePaciente(PacienteDTO pacienteDTO) {
         ABMResult abmResult = model.updatePaciente(pacienteDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
     }
 
-    public PacienteDTO getPacienteByID(int id){
+    public PacienteDTO getPacienteByID(int id) {
         return model.read(id);
     }
 
-    public List<PacienteDTO> getAllPacientes(){
+    public List<PacienteDTO> getAllPacientes() {
         return model.getAllPacientes();
     }
 
-    public PacienteDTO[] getAllPacientesAsArray(){
+    public PacienteDTO[] getAllPacientesAsArray() {
         List<PacienteDTO> pacientesList = model.getAllPacientes();
         PacienteDTO[] pacientesArray = new PacienteDTO[pacientesList.size()];
         pacientesArray = pacientesList.toArray(pacientesArray);

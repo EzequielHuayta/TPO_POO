@@ -1,7 +1,5 @@
 package model.practica;
 
-import model.paciente.PacienteDTO;
-
 public class PracticaDTO {
 
     private int codigo;

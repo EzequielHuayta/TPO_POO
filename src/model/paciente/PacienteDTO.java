@@ -35,7 +35,7 @@ public class PacienteDTO {
         return id;
     }
 
-    public void setId(int nuevoId){
+    public void setId(int nuevoId) {
         id = nuevoId;
     }
 

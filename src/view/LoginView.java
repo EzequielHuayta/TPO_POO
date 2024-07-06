@@ -24,7 +24,7 @@ public class LoginView extends JPanel {
         // Space between fields
         Insets fieldsInset = new Insets(0, 0, 10, 0);
         // Space between buttons
-        Insets buttonInset = new Insets(20,0,0,0);
+        Insets buttonInset = new Insets(20, 0, 0, 0);
 
         // Grid Bag Layout
         setLayout(new GridBagLayout());
@@ -65,13 +65,13 @@ public class LoginView extends JPanel {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
-            if(usuarioController.authenticateUsuario(email, password)){
+            if (usuarioController.authenticateUsuario(email, password)) {
                 emailField.setText("");
                 passwordField.setText("");
                 MainFrame mainFrame = MainFrame.getInstance();
                 mainFrame.addPanel(new OptionsView(), "options");
                 mainFrame.showPanel("options");
-            }else {
+            } else {
                 JOptionPane.showMessageDialog(null, "Email o contraseña invalidos", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });

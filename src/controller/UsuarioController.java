@@ -12,7 +12,8 @@ public class UsuarioController {
     private static UsuarioController instance;
     private final UsuarioModel model;
     private final ArrayList<RefreshableView> attachedViews;
-    private UsuarioDTO loggedUser;
+    private int loggedUserID = -1;
+
     private UsuarioController() {
         model = new UsuarioModel();
         attachedViews = new ArrayList<>();
@@ -25,31 +26,34 @@ public class UsuarioController {
         return instance;
     }
 
-    public void attachView(RefreshableView view){
+    public void attachView(RefreshableView view) {
         attachedViews.add(view);
     }
 
-    public void detachView(RefreshableView view){
+    public void detachView(RefreshableView view) {
         attachedViews.remove(view);
     }
 
-    private void refreshViews(){
-        for (RefreshableView view : attachedViews){
+    private void refreshViews() {
+        for (RefreshableView view : attachedViews) {
             view.onRefresh();
         }
     }
 
     public ABMResult addUsuario(UsuarioDTO usuarioDTO) {
         ABMResult abmResult = model.addUsuario(usuarioDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
     }
 
     public ABMResult deleteUsuario(int id) {
+        if (loggedUserID == id) {
+            return new ABMResult(false, "El usuario seleccionado tiene la sesión abierta y no puede eliminarse");
+        }
         ABMResult abmResult = model.deleteUsuario(id);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -57,21 +61,21 @@ public class UsuarioController {
 
     public ABMResult updateUsuario(UsuarioDTO usuarioDTO) {
         ABMResult abmResult = model.updateUsuario(usuarioDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
     }
 
-    public UsuarioDTO getUsuarioByID(int id){
+    public UsuarioDTO getUsuarioByID(int id) {
         return model.read(id);
     }
 
-    public List<UsuarioDTO> getAllUsuarios(){
+    public List<UsuarioDTO> getAllUsuarios() {
         return model.getAllUsuarios();
     }
 
-    public UsuarioDTO[] getAllUsuariosAsArray(){
+    public UsuarioDTO[] getAllUsuariosAsArray() {
         List<UsuarioDTO> usuariosList = model.getAllUsuarios();
         UsuarioDTO[] usuariosArray = new UsuarioDTO[usuariosList.size()];
         usuariosArray = usuariosList.toArray(usuariosArray);
@@ -81,17 +85,20 @@ public class UsuarioController {
     public boolean authenticateUsuario(String email, String password) {
         UsuarioDTO usuario = model.authenticateUsuario(email, password);
         if (usuario != null) {
-            loggedUser = usuario;
+            loggedUserID = usuario.getId();
             return true;
         }
         return false;
     }
 
     public UsuarioDTO getLoggedUser() {
-        return loggedUser;
+        if (loggedUserID == -1) {
+            return null;
+        }
+        return getUsuarioByID(loggedUserID);
     }
 
     public void logoutUser() {
-        loggedUser = null;
+        loggedUserID = -1;
     }
 }

@@ -13,6 +13,7 @@ public class SucursalController {
     private static SucursalController instance;
     private final SucursalModel model;
     private final ArrayList<RefreshableView> attachedViews;
+
     private SucursalController() {
         model = new SucursalModel();
         attachedViews = new ArrayList<>();
@@ -25,23 +26,23 @@ public class SucursalController {
         return instance;
     }
 
-    public void attachView(RefreshableView view){
+    public void attachView(RefreshableView view) {
         attachedViews.add(view);
     }
 
-    public void detachView(RefreshableView view){
+    public void detachView(RefreshableView view) {
         attachedViews.remove(view);
     }
 
-    private void refreshViews(){
-        for (RefreshableView view : attachedViews){
+    private void refreshViews() {
+        for (RefreshableView view : attachedViews) {
             view.onRefresh();
         }
     }
 
     public ABMResult addSucursal(SucursalDTO sucursalDTO) {
         ABMResult abmResult = model.addSucursal(sucursalDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -49,7 +50,7 @@ public class SucursalController {
 
     public ABMResult deleteSucursal(int numero) {
         ABMResult abmResult = model.deleteSucursal(numero);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -57,26 +58,24 @@ public class SucursalController {
 
     public ABMResult updateSucursal(SucursalDTO sucursalDTO) {
         ABMResult abmResult = model.updateSucursal(sucursalDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
     }
 
-    public SucursalDTO getSucursalByNumero(int numero){
+    public SucursalDTO getSucursalByNumero(int numero) {
         return model.read(numero);
     }
 
-    public List<SucursalDTO> getAllSucursales(){
+    public List<SucursalDTO> getAllSucursales() {
         return model.getAllSucursales();
     }
 
-    public SucursalDTO[] getAllSucursalesAsArray(){
+    public SucursalDTO[] getAllSucursalesAsArray() {
         List<SucursalDTO> sucursalesList = model.getAllSucursales();
         SucursalDTO[] sucursalesArray = new SucursalDTO[sucursalesList.size()];
         sucursalesArray = sucursalesList.toArray(sucursalesArray);
         return sucursalesArray;
     }
-
-
 }

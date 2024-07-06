@@ -12,7 +12,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class PracticaListView extends JPanel implements RefreshableView {
@@ -28,21 +27,28 @@ public class PracticaListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
             practicaController.detachView(this);
             mainFrame.goBack();
         });
 
-        JButton createUserButton = new JButton("Crear práctica");
-        createUserButton.addActionListener(e -> {
+        JLabel titleLabel = new JLabel("Prácticas");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton createButton = new JButton("Crear práctica");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new PracticaFormView(), "practicaform");
             mainFrame.showPanel("practicaform");
         });
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createUserButton, BorderLayout.EAST);
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(createButton);
         add(toolBar, BorderLayout.NORTH);
 
         createTable(practicaController);
@@ -124,10 +130,10 @@ public class PracticaListView extends JPanel implements RefreshableView {
         tableModel.fireTableDataChanged();
     }
 
-    private String habilitadaToString(boolean valorHabilitada){
-        if(valorHabilitada){
+    private String habilitadaToString(boolean valorHabilitada) {
+        if (valorHabilitada) {
             return "Si";
-        }else return "No";
+        } else return "No";
     }
 }
 

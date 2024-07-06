@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class PracticaFormView extends JPanel{
+public class PracticaFormView extends JPanel {
     private JButton backButton;
     private JButton createButton;
     private JToolBar toolBar;
@@ -55,7 +55,7 @@ public class PracticaFormView extends JPanel{
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeView(){
+    private void initializeView() {
         // Controllers
         practicaController = PracticaController.getInstance();
 
@@ -148,17 +148,17 @@ public class PracticaFormView extends JPanel{
     }
 
     private void createPractica() {
-        if (!validateNonEmptyFields(nombreField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)){
+        if (!validateNonEmptyFields(nombreField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)) {
             return;
         }
         String nombre = nombreField.getText();
         int grupo = Integer.parseInt(grupoField.getText());
         int valoresCriticos = Integer.parseInt(valoresCriticosField.getText());
         int valoresReservados = Integer.parseInt(valoresReservadosField.getText());
-        int cantidadHorasResultados =  Integer.parseInt(cantidadHorasResultado.getText());
+        int cantidadHorasResultados = Integer.parseInt(cantidadHorasResultado.getText());
         String habilitadoString = (String) habilitadoComboBox.getSelectedItem();
         assert habilitadoString != null;
-        ABMResult abmResult = practicaController.addPractica(new PracticaDTO(nombre, grupo, valoresCriticos,valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
+        ABMResult abmResult = practicaController.addPractica(new PracticaDTO(nombre, grupo, valoresCriticos, valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
         if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
@@ -168,17 +168,17 @@ public class PracticaFormView extends JPanel{
     }
 
     private void updateResultado(int codigo) {
-        if (!validateNonEmptyFields(nombreField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)){
+        if (!validateNonEmptyFields(nombreField) || !validateNonEmptyFields(grupoField) || !validateNonEmptyFields(valoresCriticosField) || !validateNonEmptyFields(valoresReservadosField) || !validateNonEmptyFields(cantidadHorasResultado)) {
             return;
         }
         String nombre = nombreField.getText();
         int grupo = Integer.parseInt(grupoField.getText());
         int valoresCriticos = Integer.parseInt(valoresCriticosField.getText());
         int valoresReservados = Integer.parseInt(valoresReservadosField.getText());
-        int cantidadHorasResultados =  Integer.parseInt(cantidadHorasResultado.getText());
+        int cantidadHorasResultados = Integer.parseInt(cantidadHorasResultado.getText());
         String habilitadoString = (String) habilitadoComboBox.getSelectedItem();
         assert habilitadoString != null;
-        ABMResult abmResult = practicaController.updatePractica(new PracticaDTO(codigo, nombre, grupo, valoresCriticos,valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
+        ABMResult abmResult = practicaController.updatePractica(new PracticaDTO(codigo, nombre, grupo, valoresCriticos, valoresReservados, cantidadHorasResultados, stringnStatusToBoolean(habilitadoString)));
         if (abmResult.getResult()) {
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
@@ -198,13 +198,13 @@ public class PracticaFormView extends JPanel{
         return true;
     }
 
-    private String booleanStatusToString(boolean status){
-        if(status){
+    private String booleanStatusToString(boolean status) {
+        if (status) {
             return estados[0];
-        }else return estados[1];
+        } else return estados[1];
     }
 
-    private boolean stringnStatusToBoolean(String status){
+    private boolean stringnStatusToBoolean(String status) {
         return status.equals(estados[0]);
     }
 }

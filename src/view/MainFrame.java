@@ -54,7 +54,7 @@ public class MainFrame extends JFrame {
             String currentPanel = panelHistory.pop();
             mainPanel.remove(panelMap.get(currentPanel));
             panelMap.remove(currentPanel);
-            if(!panelHistory.isEmpty()){
+            if (!panelHistory.isEmpty()) {
                 String previousPanel = panelHistory.peek();
                 cardLayout.show(mainPanel, previousPanel);
             }

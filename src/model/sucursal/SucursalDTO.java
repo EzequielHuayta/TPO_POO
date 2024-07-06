@@ -21,7 +21,7 @@ public class SucursalDTO {
         return numero;
     }
 
-    public void setNumero(int nuevoNumero){
+    public void setNumero(int nuevoNumero) {
         numero = nuevoNumero;
     }
 

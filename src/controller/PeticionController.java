@@ -2,7 +2,6 @@ package controller;
 
 import model.peticion.PeticionDTO;
 import model.peticion.PeticionModel;
-import model.practica.PracticaDTO;
 import model.resultado.ResultadoDTO;
 import utils.ABMResult;
 import view.RefreshableView;
@@ -14,6 +13,7 @@ public class PeticionController {
     private static PeticionController instance;
     private final PeticionModel model;
     private final ArrayList<RefreshableView> attachedViews;
+
     private PeticionController() {
         model = new PeticionModel();
         attachedViews = new ArrayList<>();
@@ -26,23 +26,23 @@ public class PeticionController {
         return instance;
     }
 
-    public void attachView(RefreshableView view){
+    public void attachView(RefreshableView view) {
         attachedViews.add(view);
     }
 
-    public void detachView(RefreshableView view){
+    public void detachView(RefreshableView view) {
         attachedViews.remove(view);
     }
 
-    private void refreshViews(){
-        for (RefreshableView view : attachedViews){
+    private void refreshViews() {
+        for (RefreshableView view : attachedViews) {
             view.onRefresh();
         }
     }
 
     public ABMResult addPeticion(PeticionDTO peticionDTO) {
         ABMResult abmResult = model.addPeticion(peticionDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -50,7 +50,7 @@ public class PeticionController {
 
     public ABMResult deletePeticion(int id) {
         ABMResult abmResult = model.deletePeticion(id);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
@@ -58,21 +58,21 @@ public class PeticionController {
 
     public ABMResult updatePeticion(PeticionDTO peticionDTO) {
         ABMResult abmResult = model.updatePeticion(peticionDTO);
-        if(abmResult.getResult()){
+        if (abmResult.getResult()) {
             refreshViews();
         }
         return abmResult;
     }
 
-    public PeticionDTO getPeticionByID(int id){
+    public PeticionDTO getPeticionByID(int id) {
         return model.read(id);
     }
 
-    public List<PeticionDTO> getAllPeticiones(){
+    public List<PeticionDTO> getAllPeticiones() {
         return model.getAllPeticiones();
     }
 
-    public PeticionDTO[] getAllPeticionesArray(){
+    public PeticionDTO[] getAllPeticionesArray() {
         List<PeticionDTO> peticionesList = model.getAllPeticiones();
         PeticionDTO[] peticionesArray = new PeticionDTO[peticionesList.size()];
         peticionesArray = peticionesList.toArray(peticionesArray);
@@ -85,7 +85,7 @@ public class PeticionController {
 
         for (PeticionDTO peticion : peticionesList) {
             for (ResultadoDTO resultado : peticion.getListResultados()) {
-                if(resultado.esCritico() && !peticionesCriticasList.contains(peticion)) {
+                if (resultado.esCritico() && !peticionesCriticasList.contains(peticion)) {
                     peticionesCriticasList.add(peticion);
                 }
             }

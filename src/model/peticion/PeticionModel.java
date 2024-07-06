@@ -1,7 +1,6 @@
 package model.peticion;
 
 import com.google.gson.reflect.TypeToken;
-import model.paciente.PacienteDTO;
 import model.practica.PracticaDTO;
 import persist.GenericDAO;
 import utils.ABMResult;
@@ -31,13 +30,13 @@ public class PeticionModel extends GenericDAO<PeticionDTO> {
 
     public int getLatestId() {
         List<PeticionDTO> peticiones = readAll();
-        if(!peticiones.isEmpty()){
-            return peticiones.get(peticiones.size()-1).getId() + 1;
+        if (!peticiones.isEmpty()) {
+            return peticiones.get(peticiones.size() - 1).getId() + 1;
         }
         return 0;
     }
 
-    public ABMResult addPeticion(PeticionDTO peticionDTO){
+    public ABMResult addPeticion(PeticionDTO peticionDTO) {
         peticionDTO.setId(getLatestId());
         peticionDTO.setFechaCarga(getCurrentDate());
         peticionDTO.setFechaCalculadaEntrega(calculateExpectedDate(peticionDTO.getFechaCarga(), peticionDTO.getListPracticas()));
@@ -45,14 +44,14 @@ public class PeticionModel extends GenericDAO<PeticionDTO> {
         return new ABMResult(true, "Petición creada con éxito");
     }
 
-    public ABMResult updatePeticion(PeticionDTO peticionDTO){
+    public ABMResult updatePeticion(PeticionDTO peticionDTO) {
         peticionDTO.setFechaCarga(getCurrentDate());
         peticionDTO.setFechaCalculadaEntrega(calculateExpectedDate(peticionDTO.getFechaCarga(), peticionDTO.getListPracticas()));
         update(peticionDTO);
         return new ABMResult(true, "Petición actualizada con éxito");
     }
 
-    public ABMResult deletePeticion(int id){
+    public ABMResult deletePeticion(int id) {
         delete(id);
         return new ABMResult(true, "Petición eliminada con éxito");
     }
@@ -61,7 +60,7 @@ public class PeticionModel extends GenericDAO<PeticionDTO> {
         return readAll();
     }
 
-    private Date getCurrentDate(){
+    private Date getCurrentDate() {
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDate = localDate.format(formatter);
@@ -75,12 +74,12 @@ public class PeticionModel extends GenericDAO<PeticionDTO> {
         return date;
     }
 
-    private Date calculateExpectedDate(Date fechaInicial, List<PracticaDTO> listPracticas){
+    private Date calculateExpectedDate(Date fechaInicial, List<PracticaDTO> listPracticas) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(fechaInicial);
         int horas = 0;
-        for(PracticaDTO practicaDTO : listPracticas){
-            horas+= practicaDTO.getCantidadHorasResultados();
+        for (PracticaDTO practicaDTO : listPracticas) {
+            horas += practicaDTO.getCantidadHorasResultados();
         }
         calendar.add(Calendar.HOUR_OF_DAY, horas);
         return calendar.getTime();

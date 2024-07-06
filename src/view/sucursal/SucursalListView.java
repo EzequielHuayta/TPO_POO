@@ -16,7 +16,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class SucursalListView extends JPanel implements RefreshableView {
@@ -34,21 +33,28 @@ public class SucursalListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
             sucursalController.detachView(this);
             mainFrame.goBack();
         });
 
-        JButton createUserButton = new JButton("Crear sucursal");
-        createUserButton.addActionListener(e -> {
+        JLabel titleLabel = new JLabel("Sucursales");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton createButton = new JButton("Crear sucursal");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new SucursalFormView(), "sucursalform");
             mainFrame.showPanel("sucursalform");
         });
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createUserButton, BorderLayout.EAST);
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(createButton);
         add(toolBar, BorderLayout.NORTH);
 
         createTable(sucursalController);
@@ -89,9 +95,9 @@ public class SucursalListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar esta sucursal?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    if(hasPeticionesFinalizadas(id)){
+                    if (hasPeticionesFinalizadas(id)) {
                         JOptionPane.showMessageDialog(mainFrame, "No se permite borrar sucursales con resultados finalizados", "Error", JOptionPane.ERROR_MESSAGE);
-                    }else{
+                    } else {
                         SucursalDeleteView dialog = new SucursalDeleteView(mainFrame, sucursalController.getSucursalByNumero(id));
                         dialog.setVisible(true);
                     }
@@ -134,10 +140,10 @@ public class SucursalListView extends JPanel implements RefreshableView {
         } else return "Sin asignar";
     }
 
-    private boolean hasPeticionesFinalizadas(int numeroSucursal){
+    private boolean hasPeticionesFinalizadas(int numeroSucursal) {
         List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
-        for(PeticionDTO peticionDTO : peticiones){
-            if (peticionDTO.getNumeroSucursal() == numeroSucursal && peticionDTO.isFinalizada()){
+        for (PeticionDTO peticionDTO : peticiones) {
+            if (peticionDTO.getNumeroSucursal() == numeroSucursal && peticionDTO.isFinalizada()) {
                 return true;
             }
         }

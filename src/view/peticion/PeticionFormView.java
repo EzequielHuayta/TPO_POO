@@ -20,7 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class PeticionFormView extends JPanel{
+public class PeticionFormView extends JPanel {
     private JButton backButton;
     private JButton createButton;
     private JToolBar toolBar;
@@ -63,7 +63,7 @@ public class PeticionFormView extends JPanel{
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeView(){
+    private void initializeView() {
         // Controllers
         practicaController = PracticaController.getInstance();
         peticionController = PeticionController.getInstance();
@@ -102,7 +102,7 @@ public class PeticionFormView extends JPanel{
         gbc.gridy = 2;
         DefaultListModel<CheckListItem> listModel = new DefaultListModel<>();
         for (PracticaDTO practica : practicasArray) {
-            if(practica.isHabilitada()){
+            if (practica.isHabilitada()) {
                 listModel.addElement(new CheckListItem(practica));
             }
         }
@@ -133,7 +133,7 @@ public class PeticionFormView extends JPanel{
     }
 
     private void createPractica() {
-        if (!validateNonEmptyFields(obraSocialField)){
+        if (!validateNonEmptyFields(obraSocialField)) {
             return;
         }
         String obraSocial = obraSocialField.getText();
@@ -156,7 +156,7 @@ public class PeticionFormView extends JPanel{
     }
 
     private void updateResultado(int id, List<ResultadoDTO> listaResultados) {
-        if (!validateNonEmptyFields(obraSocialField)){
+        if (!validateNonEmptyFields(obraSocialField)) {
             return;
         }
         String obraSocial = obraSocialField.getText();

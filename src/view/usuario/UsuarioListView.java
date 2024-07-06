@@ -2,6 +2,7 @@ package view.usuario;
 
 import controller.UsuarioController;
 import model.usuario.UsuarioDTO;
+import utils.ABMResult;
 import utils.ButtonEditor;
 import utils.ButtonListener;
 import utils.ButtonRenderer;
@@ -10,11 +11,8 @@ import view.RefreshableView;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -31,21 +29,28 @@ public class UsuarioListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
             usuarioController.detachView(this);
             mainFrame.goBack();
         });
 
-        JButton createUserButton = new JButton("Crear usuario");
-        createUserButton.addActionListener(e -> {
+        JLabel titleLabel = new JLabel("Usuarios");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton createButton = new JButton("Crear usuario");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new UsuarioFormView(), "usuarioform");
             mainFrame.showPanel("usuarioform");
         });
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createUserButton, BorderLayout.EAST);
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(createButton);
         add(toolBar, BorderLayout.NORTH);
 
         createTable(usuarioController);
@@ -93,6 +98,10 @@ public class UsuarioListView extends JPanel implements RefreshableView {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este usuario?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
                     usuarioController.deleteUsuario(id);
+                    ABMResult abmResult = usuarioController.deleteUsuario(id);
+                    if (!abmResult.getResult()) {
+                        JOptionPane.showMessageDialog(mainFrame, abmResult.getResultMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
         }));

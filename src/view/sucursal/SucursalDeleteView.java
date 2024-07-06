@@ -3,7 +3,6 @@ package view.sucursal;
 import controller.PacienteController;
 import controller.PeticionController;
 import controller.SucursalController;
-import controller.UsuarioController;
 import model.paciente.PacienteDTO;
 import model.peticion.PeticionDTO;
 import model.sucursal.SucursalDTO;
@@ -23,7 +22,7 @@ public class SucursalDeleteView extends JDialog {
     private SucursalController sucursalController;
     private final PacienteController pacienteController = PacienteController.getInstance();
     private final PeticionController peticionController = PeticionController.getInstance();
-    private Frame parentFrame;
+    private final Frame parentFrame;
 
     public SucursalDeleteView(Frame parent, SucursalDTO sucursal) {
         super(parent, "Borrar Sucursal", true);
@@ -98,20 +97,20 @@ public class SucursalDeleteView extends JDialog {
     }
 
 
-    private void replaceSucursalFromPaciente(int oldSucursal, int newSucursal){
+    private void replaceSucursalFromPaciente(int oldSucursal, int newSucursal) {
         List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
-        for (PacienteDTO pacienteDTO: pacientes){
-            if(pacienteDTO.getSucursalAsignada() == oldSucursal){
+        for (PacienteDTO pacienteDTO : pacientes) {
+            if (pacienteDTO.getSucursalAsignada() == oldSucursal) {
                 pacienteDTO.setSucursalAsignada(newSucursal);
                 pacienteController.updatePaciente(pacienteDTO);
             }
         }
     }
 
-    private void replaceSucursalFromPeticion(int oldSucursal, int newSucursal){
+    private void replaceSucursalFromPeticion(int oldSucursal, int newSucursal) {
         List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
-        for (PeticionDTO peticionDTO: peticiones){
-            if(peticionDTO.getNumeroSucursal() == oldSucursal){
+        for (PeticionDTO peticionDTO : peticiones) {
+            if (peticionDTO.getNumeroSucursal() == oldSucursal) {
                 peticionDTO.setNumeroSucursal(newSucursal);
                 peticionController.updatePeticion(peticionDTO);
             }

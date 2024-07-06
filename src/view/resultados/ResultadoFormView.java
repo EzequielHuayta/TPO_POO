@@ -57,7 +57,7 @@ public class ResultadoFormView extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    private void initializeView(){
+    private void initializeView() {
         // Controllers
         resultadosController = ResultadosController.getInstance();
         practicaController = PracticaController.getInstance();
@@ -116,7 +116,7 @@ public class ResultadoFormView extends JPanel {
     }
 
     private void createResultado() {
-        if (!validateNonEmptyFields(valorField)){
+        if (!validateNonEmptyFields(valorField)) {
             return;
         }
         PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
@@ -136,7 +136,7 @@ public class ResultadoFormView extends JPanel {
     }
 
     private void updateResultado(int id) {
-        if (!validateNonEmptyFields(valorField)){
+        if (!validateNonEmptyFields(valorField)) {
             return;
         }
         PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
@@ -154,7 +154,7 @@ public class ResultadoFormView extends JPanel {
         }
     }
 
-    private boolean validateNonEmptyFields(JTextField... fields){
+    private boolean validateNonEmptyFields(JTextField... fields) {
         for (JTextField field : fields) {
             if (field.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -164,8 +164,8 @@ public class ResultadoFormView extends JPanel {
         return true;
     }
 
-    private void updatePeticionWithNewResultado(ResultadoDTO newResultadoDTO, ResultadoDTO oldResultadoDTO){
-        if(oldResultadoDTO != null){
+    private void updatePeticionWithNewResultado(ResultadoDTO newResultadoDTO, ResultadoDTO oldResultadoDTO) {
+        if (oldResultadoDTO != null) {
             PeticionDTO oldPeticion = peticionController.getPeticionByID(oldResultadoDTO.getPeticionAsociada());
             oldPeticion.removeResultado(oldResultadoDTO);
         }

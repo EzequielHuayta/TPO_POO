@@ -25,8 +25,8 @@ public class PeticionListView extends JPanel implements RefreshableView {
     private final PeticionController peticionController = PeticionController.getInstance();
     private final UsuarioController usuarioController = UsuarioController.getInstance();
     private DefaultTableModel tableModel;
-    private UsuarioDTO loggedUser;
-    private boolean isCritico;
+    private final UsuarioDTO loggedUser;
+    private final boolean isCritico;
 
     public PeticionListView(boolean isCritico) {
         this.isCritico = isCritico;
@@ -37,31 +37,38 @@ public class PeticionListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
             peticionController.detachView(this);
             mainFrame.goBack();
         });
-
-        JButton createUserButton = new JButton("Crear petición");
-        createUserButton.addActionListener(e -> {
+        JLabel titleLabel = new JLabel(isCritico ? "Peticiones con resultados críticos" : "Peticiones");
+        titleLabel.setForeground(isCritico ? Color.RED : Color.BLACK);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JButton createButton = new JButton("Crear petición");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new PeticionFormView(), "peticionform");
             mainFrame.showPanel("peticionform");
         });
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
         if (!isCritico) {
             JButton showCriticButton = new JButton("Listar peticiones criticas");
             showCriticButton.addActionListener(e -> {
-                mainFrame.addPanel(new PeticionListView(true), "peticionlist");
-                mainFrame.showPanel("peticionlist");
+                mainFrame.addPanel(new PeticionListView(true), "peticioncriticallist");
+                mainFrame.showPanel("peticioncriticallist");
             });
-            toolBar.add(showCriticButton, BorderLayout.SOUTH);
-        }
-        toolBar.add(createUserButton, BorderLayout.EAST);
-        add(toolBar, BorderLayout.NORTH);
 
+            toolBar.add(showCriticButton);
+        }
+
+        toolBar.add(createButton);
+        add(toolBar, BorderLayout.NORTH);
 
         loggedUser = usuarioController.getLoggedUser();
         if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
@@ -72,7 +79,7 @@ public class PeticionListView extends JPanel implements RefreshableView {
     }
 
     private void createAdminTable(PeticionController peticionController, Boolean isCritico) {
-        java.util.List<PeticionDTO> peticiones = null;
+        java.util.List<PeticionDTO> peticiones;
         String[] columnNames = {"ID", "Obra Social", "Fecha de carga", "Fecha entrega estimada", "Paciente", "Practicas", "Finalizada", "Acciones"};
         if (!isCritico) {
             peticiones = peticionController.getAllPeticiones();
@@ -131,7 +138,7 @@ public class PeticionListView extends JPanel implements RefreshableView {
     }
 
     private void createTable(PeticionController peticionController, Boolean isCritico) {
-        java.util.List<PeticionDTO> peticiones = null;
+        java.util.List<PeticionDTO> peticiones;
         String[] columnNames = {"ID", "Obra Social", "Fecha de carga", "Fecha entrega estimada", "Paciente", "Practicas", "Finalizada"};
         if (!isCritico) {
             peticiones = peticionController.getAllPeticiones();
@@ -152,8 +159,12 @@ public class PeticionListView extends JPanel implements RefreshableView {
             data[i][6] = finalizadaToString(peticion.isFinalizada());
         }
 
-        tableModel = new DefaultTableModel(data, columnNames);
-        // Custom JTable implementation
+        tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         tableModel = new DefaultTableModel(data, columnNames);
         JTable userTable = new JTable(tableModel) {
             // Nothing to do here
@@ -195,7 +206,7 @@ public class PeticionListView extends JPanel implements RefreshableView {
                 };
                 tableModel.addRow(row);
             }
-        }else {
+        } else {
             for (PeticionDTO peticion : peticones) {
                 Object[] row = {
                         peticion.getId(),

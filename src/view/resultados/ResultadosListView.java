@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.util.List;
+
 import model.resultado.ResultadoDTO;
 
 public class ResultadosListView extends JPanel implements RefreshableView {
@@ -31,7 +32,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
     private final PracticaController practicaController = PracticaController.getInstance();
     private DefaultTableModel tableModel;
-    private UsuarioDTO loggedUser;
+    private final UsuarioDTO loggedUser;
 
     public ResultadosListView() {
         // Controller
@@ -40,28 +41,34 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
             resultadosController.detachView(this);
             mainFrame.goBack();
         });
 
-        JButton createResult = new JButton("Crear resultado");
-        createResult.addActionListener(e -> {
+        JLabel titleLabel = new JLabel("Resultados");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton createButton = new JButton("Crear resultado");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new ResultadoFormView(), "resultadoForm");
             mainFrame.showPanel("resultadoForm");
         });
 
-
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createResult, BorderLayout.EAST);
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(createButton);
         add(toolBar, BorderLayout.NORTH);
 
         loggedUser = usuarioController.getLoggedUser();
-        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
             createAdminTable(resultadosController);
-        }else {
+        } else {
             createTable(resultadosController);
         }
     }
@@ -133,10 +140,17 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             data[i][3] = resultado.getPeticionAsociada() + " - " + peticionController.getPeticionByID(resultado.getPeticionAsociada()).getPaciente().getNombre();
         }
 
-        tableModel = new DefaultTableModel(data, columnNames);
+        tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable resultsTable = new JTable(tableModel) {
             // Nothing to do here
         };
+
+
 
         // Adjusting column sizes
         TableColumnModel columnModel = resultsTable.getColumnModel();
@@ -153,7 +167,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
         List<ResultadoDTO> resultados = resultadosController.getAllResultados();
 
-        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
             for (ResultadoDTO resultado : resultados) {
                 boolean isReservado = resultado.esReservado();
 
@@ -166,7 +180,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
                 };
                 tableModel.addRow(row);
             }
-        }else {
+        } else {
             for (ResultadoDTO resultado : resultados) {
                 Object[] row = {
                         resultado.getResultadoID(),
@@ -180,7 +194,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         tableModel.fireTableDataChanged();
     }
 
-    private void updatePeticionAfterResultadoDeletion(int peticionID, ResultadoDTO resultadoDTO){
+    private void updatePeticionAfterResultadoDeletion(int peticionID, ResultadoDTO resultadoDTO) {
         PeticionDTO peticion = peticionController.getPeticionByID(peticionID);
         peticion.removeResultado(resultadoDTO);
         peticionController.updatePeticion(peticion);

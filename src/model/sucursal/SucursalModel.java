@@ -22,8 +22,8 @@ public class SucursalModel extends GenericDAO<SucursalDTO> {
 
     public int getLatestNumber() {
         List<SucursalDTO> sucursales = readAll();
-        if(!sucursales.isEmpty()){
-            return sucursales.get(sucursales.size()-1).getNumero() + 1;
+        if (!sucursales.isEmpty()) {
+            return sucursales.get(sucursales.size() - 1).getNumero() + 1;
         }
         return 0;
     }
@@ -38,24 +38,24 @@ public class SucursalModel extends GenericDAO<SucursalDTO> {
         return false;
     }
 
-    public ABMResult addSucursal(SucursalDTO sucursal){
+    public ABMResult addSucursal(SucursalDTO sucursal) {
         sucursal.setNumero(getLatestNumber());
-        if(verifyInUseDireccion(sucursal.getDireccion(), -1)){
+        if (verifyInUseDireccion(sucursal.getDireccion(), -1)) {
             return new ABMResult(false, "Ya existe una sucursal en esa dirección");
         }
         create(sucursal);
         return new ABMResult(true, "Sucursal creada con éxito");
     }
 
-    public ABMResult updateSucursal(SucursalDTO sucursal){
-        if(verifyInUseDireccion(sucursal.getDireccion(), sucursal.getNumero())){
+    public ABMResult updateSucursal(SucursalDTO sucursal) {
+        if (verifyInUseDireccion(sucursal.getDireccion(), sucursal.getNumero())) {
             return new ABMResult(false, "Ya existe una sucursal en esa dirección");
         }
         update(sucursal);
         return new ABMResult(true, "Sucursal actualizada con éxito");
     }
 
-    public ABMResult deleteSucursal(int numero){
+    public ABMResult deleteSucursal(int numero) {
         delete(numero);
         return new ABMResult(true, "Sucursal eliminada con éxito");
     }

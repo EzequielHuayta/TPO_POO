@@ -29,7 +29,7 @@ public class PacienteListView extends JPanel implements RefreshableView {
     private final UsuarioController usuarioController = UsuarioController.getInstance();
     private final PeticionController peticionController = PeticionController.getInstance();
     private DefaultTableModel tableModel;
-    private UsuarioDTO loggedUser;
+    private final UsuarioDTO loggedUser;
 
 
     public PacienteListView() {
@@ -39,27 +39,34 @@ public class PacienteListView extends JPanel implements RefreshableView {
         // UI
         setLayout(new BorderLayout());
         JToolBar toolBar = new JToolBar();
+        toolBar.setLayout(new BoxLayout(toolBar, BoxLayout.X_AXIS));
+
         JButton backButton = new JButton("Atrás");
         backButton.addActionListener(e -> {
-            pacienteController.detachView(this);
+            peticionController.detachView(this);
             mainFrame.goBack();
         });
 
-        JButton createUserButton = new JButton("Crear paciente");
-        createUserButton.addActionListener(e -> {
+        JLabel titleLabel = new JLabel("Pacientes");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton createButton = new JButton("Crear paciente");
+        createButton.addActionListener(e -> {
             mainFrame.addPanel(new PacienteFormView(), "pacienteform");
             mainFrame.showPanel("pacienteform");
         });
 
-        toolBar.setLayout(new BorderLayout());
-        toolBar.add(backButton, BorderLayout.WEST);
-        toolBar.add(createUserButton, BorderLayout.EAST);
+        toolBar.add(backButton);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(titleLabel);
+        toolBar.add(Box.createHorizontalGlue());
+        toolBar.add(createButton);
         add(toolBar, BorderLayout.NORTH);
 
         loggedUser = usuarioController.getLoggedUser();
-        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
             createAdminTable(pacienteController);
-        }else {
+        } else {
             createTable(pacienteController);
         }
     }
@@ -104,9 +111,9 @@ public class PacienteListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este paciente?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
-                    if(hasPeticionesFinalizadas(id)){
+                    if (hasPeticionesFinalizadas(id)) {
                         JOptionPane.showMessageDialog(mainFrame, "No se permite borrar pacientes con resultados finalizados", "Error", JOptionPane.ERROR_MESSAGE);
-                    }else{
+                    } else {
                         pacienteController.deletePaciente(id);
 
                     }
@@ -140,7 +147,12 @@ public class PacienteListView extends JPanel implements RefreshableView {
             data[i][7] = getSucursalNameFromNumber(paciente.getSucursalAsignada());
         }
 
-        tableModel = new DefaultTableModel(data, columnNames);
+        tableModel = new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable userTable = new JTable(tableModel) {
             // Nothing to do here
         };
@@ -159,7 +171,7 @@ public class PacienteListView extends JPanel implements RefreshableView {
         tableModel.setRowCount(0);
         List<PacienteDTO> pacientes = pacienteController.getAllPacientes();
 
-        if(loggedUser.getRol() == Rol.ADMINISTRADOR){
+        if (loggedUser.getRol() == Rol.ADMINISTRADOR) {
             for (PacienteDTO paciente : pacientes) {
                 Object[] row = {
                         paciente.getId(),
@@ -174,7 +186,7 @@ public class PacienteListView extends JPanel implements RefreshableView {
                 };
                 tableModel.addRow(row);
             }
-        }else {
+        } else {
             for (PacienteDTO paciente : pacientes) {
                 Object[] row = {
                         paciente.getId(),
@@ -199,10 +211,10 @@ public class PacienteListView extends JPanel implements RefreshableView {
         } else return "Sin asignar";
     }
 
-    private boolean hasPeticionesFinalizadas(int pacienteID){
+    private boolean hasPeticionesFinalizadas(int pacienteID) {
         List<PeticionDTO> peticiones = peticionController.getAllPeticiones();
-        for(PeticionDTO peticionDTO : peticiones){
-            if (peticionDTO.getPaciente().getId() == pacienteID && peticionDTO.isFinalizada()){
+        for (PeticionDTO peticionDTO : peticiones) {
+            if (peticionDTO.getPaciente().getId() == pacienteID && peticionDTO.isFinalizada()) {
                 return true;
             }
         }

@@ -1,7 +1,6 @@
 package model.practica;
 
 import com.google.gson.reflect.TypeToken;
-import model.sucursal.SucursalDTO;
 import persist.GenericDAO;
 import utils.ABMResult;
 
@@ -24,8 +23,8 @@ public class PracticaModel extends GenericDAO<PracticaDTO> {
 
     public int getLatestCodigo() {
         List<PracticaDTO> practicas = readAll();
-        if(!practicas.isEmpty()){
-            return practicas.get(practicas.size()-1).getCodigo() + 1;
+        if (!practicas.isEmpty()) {
+            return practicas.get(practicas.size() - 1).getCodigo() + 1;
         }
         return 0;
     }
@@ -40,24 +39,24 @@ public class PracticaModel extends GenericDAO<PracticaDTO> {
         return false;
     }
 
-    public ABMResult addPractica(PracticaDTO practica){
+    public ABMResult addPractica(PracticaDTO practica) {
         practica.setCodigo(getLatestCodigo());
-        if(verifyInUseNombre(practica.getNombre(), -1)){
+        if (verifyInUseNombre(practica.getNombre(), -1)) {
             return new ABMResult(false, "Ya existe una práctica con ese nombre");
         }
         create(practica);
         return new ABMResult(true, "Práctica creada con éxito");
     }
 
-    public ABMResult updatePractica(PracticaDTO practica){
-        if(verifyInUseNombre(practica.getNombre(), practica.getCodigo())){
+    public ABMResult updatePractica(PracticaDTO practica) {
+        if (verifyInUseNombre(practica.getNombre(), practica.getCodigo())) {
             return new ABMResult(false, "Ya existe una práctica con ese nombre");
         }
         update(practica);
         return new ABMResult(true, "Práctica actualizada con éxito");
     }
 
-    public ABMResult deletePractica(int numero){
+    public ABMResult deletePractica(int numero) {
         delete(numero);
         return new ABMResult(true, "Práctica eliminada con éxito");
     }

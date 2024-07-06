@@ -1,6 +1,7 @@
 package view;
 
 import controller.UsuarioController;
+import model.usuario.Rol;
 import view.paciente.PacienteListView;
 import view.peticion.PeticionListView;
 import view.practica.PracticaListView;
@@ -11,14 +12,21 @@ import view.usuario.UsuarioListView;
 import javax.swing.*;
 import java.awt.*;
 
-public class OptionsView extends JPanel {
+public class OptionsView extends JPanel implements RefreshableView {
 
-    MainFrame mainFrame;
-    UsuarioController usuarioController;
+    private final MainFrame mainFrame;
+    private final UsuarioController usuarioController;
+    private final JButton listUsersButton;
+    private final JButton listPracticesButton;
+    private final JButton listarPeticiones;
+    private final JButton listPatientsButton;
+    private final JButton listSucursalesButton;
+    private final JButton listResultsButton;
 
     public OptionsView() {
         // Controllers
-        UsuarioController usuarioController = UsuarioController.getInstance();
+        usuarioController = UsuarioController.getInstance();
+        usuarioController.attachView(this);
 
         // UI
         setLayout(new BorderLayout());
@@ -28,6 +36,7 @@ public class OptionsView extends JPanel {
             MainFrame mainFrame = MainFrame.getInstance();
             mainFrame.goBack();
             usuarioController.logoutUser();
+            usuarioController.detachView(this);
             JOptionPane.showMessageDialog(null, "La sesión fue cerrada con éxito", "Sesión cerrada", JOptionPane.INFORMATION_MESSAGE);
         });
 
@@ -36,93 +45,65 @@ public class OptionsView extends JPanel {
         add(toolBar, BorderLayout.NORTH);
 
         mainFrame = MainFrame.getInstance();
-        setAdministratorOptions();
-    }
 
-    private void setAdministratorOptions() {
-        JPanel panel = new JPanel(new GridBagLayout());
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+
+        JLabel welcomeLabel = new JLabel("¡Bienvenido " + usuarioController.getLoggedUser().getNombre() + "!");
+        welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        welcomeLabel.setFont(getFont().deriveFont(Font.PLAIN, 28));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(80, 0, 0, 0);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(welcomeLabel, gbc);
+
+        JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(10, 10, 10, 10);
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-        JButton listUsersButton = new JButton("Listar Usuarios");
-        JButton listPracticesButton = new JButton("Listar Prácticas");
-        JButton listarPeticiones = new JButton("Listar Peticiones");
-        JButton listPatientsButton = new JButton("Listar Pacientes");
-        JButton listSucursalesButton = new JButton("Listar Sucursales");
-        JButton listResultsButton = new JButton("Listar Resultados");
+        listUsersButton = new JButton("Listar Usuarios");
+        listPracticesButton = new JButton("Listar Prácticas");
+        listarPeticiones = new JButton("Listar Peticiones");
+        listPatientsButton = new JButton("Listar Pacientes");
+        listSucursalesButton = new JButton("Listar Sucursales");
+        listResultsButton = new JButton("Listar Resultados");
 
-        // Check user role and disable buttons accordingly
-        UsuarioController usuarioController = UsuarioController.getInstance();
-
-        String role = usuarioController.getLoggedUser().getRol().name();
-        switch (role) {
-            case "ADMINISTRADOR":
-                listUsersButton.setEnabled(true);
-                listPracticesButton.setEnabled(true);
-                listarPeticiones.setEnabled(true);
-                listPatientsButton.setEnabled(true);
-                listSucursalesButton.setEnabled(true);
-                listResultsButton.setEnabled(true);
-                break;
-            case "RECEPCION":
-                listUsersButton.setEnabled(false);
-                listPracticesButton.setEnabled(false);
-                listarPeticiones.setEnabled(true);
-                listPatientsButton.setEnabled(true);
-                listSucursalesButton.setEnabled(false);
-                listResultsButton.setEnabled(false);
-                break;
-            case "LABORATORISTA":
-                listUsersButton.setEnabled(false);
-                listPracticesButton.setEnabled(false);
-                listarPeticiones.setEnabled(false);
-                listPatientsButton.setEnabled(false);
-                listSucursalesButton.setEnabled(false);
-                listResultsButton.setEnabled(true);
-                break;
-            default:
-                // Default should NOT exist
-                listUsersButton.setEnabled(false);
-                listPracticesButton.setEnabled(false);
-                listarPeticiones.setEnabled(false);
-                listPatientsButton.setEnabled(false);
-                listSucursalesButton.setEnabled(false);
-                listResultsButton.setEnabled(false);
-                break;
-        }
-
-        // Posicionar botones en el GridBagLayout
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        panel.add(listUsersButton, gridBagConstraints);
+        buttonPanel.add(listUsersButton, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        panel.add(listPracticesButton, gridBagConstraints);
+        buttonPanel.add(listPracticesButton, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        panel.add(listarPeticiones, gridBagConstraints);
+        buttonPanel.add(listarPeticiones, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        panel.add(listPatientsButton, gridBagConstraints);
+        buttonPanel.add(listPatientsButton, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        panel.add(listSucursalesButton, gridBagConstraints);
+        buttonPanel.add(listSucursalesButton, gridBagConstraints);
 
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        panel.add(listResultsButton, gridBagConstraints);
+        buttonPanel.add(listResultsButton, gridBagConstraints);
 
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
-        add(panel, BorderLayout.CENTER);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.NORTH;
+        mainPanel.add(buttonPanel, gbc);
+
+        // Add the mainPanel to the OptionsView
+        add(mainPanel, BorderLayout.CENTER);
 
         // Interactions
         listUsersButton.addActionListener(e -> {
@@ -155,5 +136,42 @@ public class OptionsView extends JPanel {
             mainFrame.showPanel("resultadolist");
         });
 
+        setActionsDependingOnRol(usuarioController.getLoggedUser().getRol());
+    }
+
+    private void setActionsDependingOnRol(Rol rol) {
+        switch (rol) {
+            case ADMINISTRADOR:
+                listUsersButton.setEnabled(true);
+                listPracticesButton.setEnabled(true);
+                listarPeticiones.setEnabled(true);
+                listPatientsButton.setEnabled(true);
+                listSucursalesButton.setEnabled(true);
+                listResultsButton.setEnabled(true);
+                break;
+            case RECEPCION:
+                listUsersButton.setEnabled(false);
+                listPracticesButton.setEnabled(false);
+                listarPeticiones.setEnabled(true);
+                listPatientsButton.setEnabled(true);
+                listSucursalesButton.setEnabled(false);
+                listResultsButton.setEnabled(false);
+                break;
+            case LABORATORISTA:
+                listUsersButton.setEnabled(false);
+                listPracticesButton.setEnabled(false);
+                listarPeticiones.setEnabled(false);
+                listPatientsButton.setEnabled(false);
+                listSucursalesButton.setEnabled(false);
+                listResultsButton.setEnabled(true);
+                break;
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        setActionsDependingOnRol(usuarioController.getLoggedUser().getRol());
+        this.revalidate();
+        this.repaint();
     }
 }
