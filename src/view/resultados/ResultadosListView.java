@@ -77,7 +77,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             data[i][0] = resultado.getResultadoID();
             data[i][1] = resultado.getTipoPractica().getNombre();
             data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
-            data[i][3] = resultado.getPeticionAsociada();
+            data[i][3] = resultado.getPeticionAsociada() + " - " + peticionController.getPeticionByID(resultado.getPeticionAsociada()).getPaciente().getNombre();
             data[i][4] = "Acciones";
         }
 
@@ -130,7 +130,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             data[i][0] = resultado.getResultadoID();
             data[i][1] = resultado.getTipoPractica().getNombre();
             data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
-            data[i][3] = resultado.getPeticionAsociada();
+            data[i][3] = resultado.getPeticionAsociada() + " - " + peticionController.getPeticionByID(resultado.getPeticionAsociada()).getPaciente().getNombre();
         }
 
         tableModel = new DefaultTableModel(data, columnNames);
@@ -161,7 +161,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
                         resultado.getResultadoID(),
                         resultado.getTipoPractica().getNombre(),
                         isReservado ? "Retirar por sucursal" : resultado.getValor(),
-                        resultado.getPeticionAsociada(),
+                        resultado.getPeticionAsociada() + " - " + peticionController.getPeticionByID(resultado.getPeticionAsociada()).getPaciente().getNombre(),
                         "Acciones"
                 };
                 tableModel.addRow(row);
@@ -172,7 +172,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
                         resultado.getResultadoID(),
                         resultado.getTipoPractica().getNombre(),
                         resultado.getValor(),
-                        resultado.getPeticionAsociada(),
+                        resultado.getPeticionAsociada() + " - " + peticionController.getPeticionByID(resultado.getPeticionAsociada()).getPaciente().getNombre(),
                 };
                 tableModel.addRow(row);
             }
