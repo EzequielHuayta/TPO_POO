@@ -85,7 +85,7 @@ public class PeticionController {
 
         for (PeticionDTO peticion : peticionesList) {
             for (ResultadoDTO resultado : peticion.getListResultados()) {
-                if(resultado.esCritico()) {
+                if(resultado.esCritico() && !peticionesCriticasList.contains(peticion)) {
                     peticionesCriticasList.add(peticion);
                 }
             }
