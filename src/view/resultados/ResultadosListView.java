@@ -1,9 +1,11 @@
 package view.resultados;
 
+import controller.PeticionController;
 import controller.PracticaController;
 import controller.ResultadosController;
 
 import controller.UsuarioController;
+import model.peticion.PeticionDTO;
 import model.usuario.Rol;
 import model.usuario.UsuarioDTO;
 import utils.ButtonEditor;
@@ -25,6 +27,7 @@ public class ResultadosListView extends JPanel implements RefreshableView {
 
     private final ResultadosController resultadosController = ResultadosController.getInstance();
     private final UsuarioController usuarioController = UsuarioController.getInstance();
+    private final PeticionController peticionController = PeticionController.getInstance();
 
     private final PracticaController practicaController = PracticaController.getInstance();
     private DefaultTableModel tableModel;
@@ -71,10 +74,10 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         for (int i = 0; i < resultados.size(); i++) {
             ResultadoDTO resultado = resultados.get(i);
             boolean isReservado = resultado.esReservado();
-            data[i][0] = resultado.getId();
+            data[i][0] = resultado.getResultadoID();
             data[i][1] = resultado.getTipoPractica().getNombre();
             data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
-            data[i][3] = resultado.getPeticionAsociada().getId();
+            data[i][3] = resultado.getPeticionAsociada();
             data[i][4] = "Acciones";
         }
 
@@ -100,6 +103,8 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             public void onDeleteButtonClicked(int id) {
                 int response = JOptionPane.showConfirmDialog(null, "¿Estás seguro de borrar este resultado?", "Confirmación", JOptionPane.YES_NO_OPTION);
                 if (response == JOptionPane.YES_OPTION) {
+                    ResultadoDTO resultadoDTO = resultadosController.getResultadoByID(id);
+                    updatePeticionAfterResultadoDeletion(resultadoDTO.getPeticionAsociada(), resultadoDTO);
                     resultadosController.deleteResultado(id);
                 }
             }
@@ -122,10 +127,10 @@ public class ResultadosListView extends JPanel implements RefreshableView {
             ResultadoDTO resultado = resultados.get(i);
             boolean isReservado = resultado.esReservado();
 
-            data[i][0] = resultado.getId();
+            data[i][0] = resultado.getResultadoID();
             data[i][1] = resultado.getTipoPractica().getNombre();
             data[i][2] = isReservado ? "Retirar por sucursal" : resultado.getValor();
-            data[i][3] = resultado.getPeticionAsociada().getId();
+            data[i][3] = resultado.getPeticionAsociada();
         }
 
         tableModel = new DefaultTableModel(data, columnNames);
@@ -153,10 +158,10 @@ public class ResultadosListView extends JPanel implements RefreshableView {
                 boolean isReservado = resultado.esReservado();
 
                 Object[] row = {
-                        resultado.getId(),
+                        resultado.getResultadoID(),
                         resultado.getTipoPractica().getNombre(),
                         isReservado ? "Retirar por sucursal" : resultado.getValor(),
-                        resultado.getPeticionAsociada().getId(),
+                        resultado.getPeticionAsociada(),
                         "Acciones"
                 };
                 tableModel.addRow(row);
@@ -164,14 +169,20 @@ public class ResultadosListView extends JPanel implements RefreshableView {
         }else {
             for (ResultadoDTO resultado : resultados) {
                 Object[] row = {
-                        resultado.getId(),
+                        resultado.getResultadoID(),
                         resultado.getTipoPractica().getNombre(),
                         resultado.getValor(),
-                        resultado.getPeticionAsociada().getId(),
+                        resultado.getPeticionAsociada(),
                 };
                 tableModel.addRow(row);
             }
         }
         tableModel.fireTableDataChanged();
+    }
+
+    private void updatePeticionAfterResultadoDeletion(int peticionID, ResultadoDTO resultadoDTO){
+        PeticionDTO peticion = peticionController.getPeticionByID(peticionID);
+        peticion.removeResultado(resultadoDTO);
+        peticionController.updatePeticion(peticion);
     }
 }

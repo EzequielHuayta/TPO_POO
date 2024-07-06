@@ -48,11 +48,11 @@ public class ResultadoFormView extends JPanel {
         oldResultado = resultado;
         JPanel buttonPanel = new JPanel();
         createButton = new JButton("Modificar resultado");
-        createButton.addActionListener(e -> updateResultado(resultado.getId()));
+        createButton.addActionListener(e -> updateResultado(resultado.getResultadoID()));
         buttonPanel.add(createButton);
 
         practicaComboBox.setSelectedItem(practicaController.getPracticaByCodigo(resultado.getTipoPractica().getCodigo()));
-        peticionComboBox.setSelectedItem(peticionController.getPeticionByID(resultado.getPeticionAsociada().getId()));
+        peticionComboBox.setSelectedItem(peticionController.getPeticionByID(resultado.getPeticionAsociada()));
         valorField.setText(Integer.toString(resultado.getValor()));
         add(buttonPanel, BorderLayout.SOUTH);
     }
@@ -90,7 +90,7 @@ public class ResultadoFormView extends JPanel {
             @Override
             public void keyTyped(KeyEvent e) {
                 char c = e.getKeyChar();
-                if (!Character.isDigit(c)) {
+                if (!Character.isDigit(c) || valorField.getText().length() >= 8) {
                     e.consume();
                 }
             }
@@ -122,10 +122,11 @@ public class ResultadoFormView extends JPanel {
         PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
         PeticionDTO peticionAsociada = (PeticionDTO) peticionComboBox.getSelectedItem();
         int valor = Integer.parseInt(valorField.getText());
-        ResultadoDTO resultadoDTO = new ResultadoDTO(tipoPractica, valor, peticionAsociada);
+        assert peticionAsociada != null;
+        ResultadoDTO resultadoDTO = new ResultadoDTO(tipoPractica, valor, peticionAsociada.getId());
         ABMResult abmResult = resultadosController.addResultado(resultadoDTO);
         if (abmResult.getResult()) {
-            resultadoDTO.setId(resultadosController.getLastCreatedID());
+            resultadoDTO.setResultadoID(resultadosController.getLastCreatedID());
             updatePeticionWithNewResultado(resultadoDTO, oldResultado);
             JOptionPane.showMessageDialog(this, abmResult.getResultMessage(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
             mainFrame.goBack();
@@ -141,7 +142,8 @@ public class ResultadoFormView extends JPanel {
         PracticaDTO tipoPractica = (PracticaDTO) practicaComboBox.getSelectedItem();
         PeticionDTO peticionAsociada = (PeticionDTO) peticionComboBox.getSelectedItem();
         int valor = Integer.parseInt(valorField.getText());
-        ResultadoDTO resultadoDTO = new ResultadoDTO(id, tipoPractica, valor, peticionAsociada);
+        assert peticionAsociada != null;
+        ResultadoDTO resultadoDTO = new ResultadoDTO(id, tipoPractica, valor, peticionAsociada.getId());
         ABMResult abmResult = resultadosController.updateResultado(resultadoDTO);
         if (abmResult.getResult()) {
             updatePeticionWithNewResultado(resultadoDTO, oldResultado);
@@ -164,10 +166,10 @@ public class ResultadoFormView extends JPanel {
 
     private void updatePeticionWithNewResultado(ResultadoDTO newResultadoDTO, ResultadoDTO oldResultadoDTO){
         if(oldResultadoDTO != null){
-            PeticionDTO oldPeticion = peticionController.getPeticionByID(oldResultadoDTO.getPeticionAsociada().getId());
+            PeticionDTO oldPeticion = peticionController.getPeticionByID(oldResultadoDTO.getPeticionAsociada());
             oldPeticion.removeResultado(oldResultadoDTO);
         }
-        PeticionDTO peticion = peticionController.getPeticionByID(newResultadoDTO.getPeticionAsociada().getId());
+        PeticionDTO peticion = peticionController.getPeticionByID(newResultadoDTO.getPeticionAsociada());
         peticion.addResultado(newResultadoDTO);
         peticionController.updatePeticion(peticion);
     }

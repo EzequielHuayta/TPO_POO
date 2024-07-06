@@ -20,19 +20,19 @@ public class ResultadoModel extends GenericDAO<ResultadoDTO> {
 
     @Override
     protected int getId(ResultadoDTO entity) {
-        return 0;
+        return entity.getResultadoID();
     }
 
     public int getLatestId() {
         List<ResultadoDTO> resultados = readAll();
         if(!resultados.isEmpty()){
-            return resultados.get(resultados.size()-1).getId() + 1;
+            return resultados.get(resultados.size()-1).getResultadoID() + 1;
         }
         return 0;
     }
 
     public ABMResult addResultado(ResultadoDTO resultado){
-        resultado.setId(getLatestId());
+        resultado.setResultadoID(getLatestId());
         create(resultado);
         return new ABMResult(true, "Resultado creado con éxito");
     }

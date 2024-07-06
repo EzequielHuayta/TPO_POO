@@ -213,19 +213,18 @@ public class PeticionListView extends JPanel implements RefreshableView {
     }
 
     private String practicasToString(List<PracticaDTO> practicasList) {
-        StringBuilder practicas;
         if (practicasList.isEmpty()) {
             return "Sin prácticas";
         } else {
-            practicas = new StringBuilder(practicasList.get(0).getNombre());
-            practicasList.remove(0);
-        }
-        if (!practicasList.isEmpty()) {
-            for (PracticaDTO practica : practicasList) {
-                practicas.append(", ").append(practica.getNombre());
+            StringBuilder practicas = new StringBuilder();
+            for (int i = 0; i < practicasList.size(); i++) {
+                if (i > 0) {
+                    practicas.append(", ");
+                }
+                practicas.append(practicasList.get(i).getNombre());
             }
+            return practicas.toString();
         }
-        return practicas.toString();
     }
 
     private String finalizadaToString(boolean valorFinalizada) {
