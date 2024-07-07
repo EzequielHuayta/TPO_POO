@@ -57,7 +57,7 @@ public class UsuarioListView extends JPanel implements RefreshableView {
     }
 
     private void createTable(UsuarioController usuarioController) {
-        String[] columnNames = {"ID", "Email", "Password", "Nombre", "Domicilio", "DNI", "Fecha Nacimiento", "Rol", "Acciones"};
+        String[] columnNames = {"ID", "Email", "Contraseña", "Nombre", "Domicilio", "DNI", "Fecha Nacimiento", "Rol", "Acciones"};
         List<UsuarioDTO> usuarios = usuarioController.getAllUsuarios();
         Object[][] data = new Object[usuarios.size()][9];
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
