@@ -49,5 +49,4 @@ public class ResultadoModel extends GenericDAO<ResultadoDTO> {
     public List<ResultadoDTO> getAllResultados() {
         return readAll();
     }
-
 }

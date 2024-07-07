@@ -12,7 +12,6 @@ public class UsuarioController {
     private static UsuarioController instance;
     private final UsuarioModel model;
     private final ArrayList<RefreshableView> attachedViews;
-    private int loggedUserID = -1;
 
     private UsuarioController() {
         model = new UsuarioModel();
@@ -49,9 +48,6 @@ public class UsuarioController {
     }
 
     public ABMResult deleteUsuario(int id) {
-        if (loggedUserID == id) {
-            return new ABMResult(false, "El usuario seleccionado tiene la sesión abierta y no puede eliminarse");
-        }
         ABMResult abmResult = model.deleteUsuario(id);
         if (abmResult.getResult()) {
             refreshViews();
@@ -85,20 +81,17 @@ public class UsuarioController {
     public boolean authenticateUsuario(String email, String password) {
         UsuarioDTO usuario = model.authenticateUsuario(email, password);
         if (usuario != null) {
-            loggedUserID = usuario.getId();
+            model.setLoggedUserID(usuario.getId());
             return true;
         }
         return false;
     }
 
     public UsuarioDTO getLoggedUser() {
-        if (loggedUserID == -1) {
-            return null;
-        }
-        return getUsuarioByID(loggedUserID);
+        return model.getLoggedUser();
     }
 
     public void logoutUser() {
-        loggedUserID = -1;
+        model.setLoggedUserID(-1);
     }
 }

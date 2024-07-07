@@ -2,7 +2,6 @@ package controller;
 
 import model.sucursal.SucursalDTO;
 import model.sucursal.SucursalModel;
-import model.usuario.UsuarioDTO;
 import utils.ABMResult;
 import view.RefreshableView;
 

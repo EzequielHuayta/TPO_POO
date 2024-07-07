@@ -10,6 +10,7 @@ import java.util.List;
 public class UsuarioModel extends GenericDAO<UsuarioDTO> {
     private static final String FILE_PATH = "src/persist/usuarios.json";
     private static final Type LIST_TYPE = new TypeToken<List<UsuarioDTO>>() {}.getType();
+    private int loggedUserID = -1;
 
     public UsuarioModel() {
         super(FILE_PATH, LIST_TYPE);
@@ -80,8 +81,22 @@ public class UsuarioModel extends GenericDAO<UsuarioDTO> {
     }
 
     public ABMResult deleteUsuario(int id) {
+        if (loggedUserID == id) {
+            return new ABMResult(false, "El usuario seleccionado tiene la sesión abierta y no puede eliminarse");
+        }
         delete(id);
         return new ABMResult(true, "Usuario eliminado con éxito");
+    }
+
+    public UsuarioDTO getLoggedUser(){
+        if(loggedUserID == -1){
+            return null;
+        }
+        return read(loggedUserID);
+    }
+
+    public void setLoggedUserID(int id){
+        loggedUserID = id;
     }
 
     public List<UsuarioDTO> getAllUsuarios() {

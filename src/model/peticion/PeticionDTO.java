@@ -105,7 +105,7 @@ public class PeticionDTO {
     public boolean isFinalizada() {
         if (listResultados.isEmpty()) {
             return false;
-        } else return listPracticas.size() == listResultados.size();
+        } else return listPracticas.size() <= listResultados.size();
     }
 
     @Override
